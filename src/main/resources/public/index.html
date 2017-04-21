@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>configserver Console</title>
+
+  <link rel='stylesheet' href='/webjars/bootstrap/css/bootstrap.min.css'>
+  <link rel='stylesheet' href='/webjars/bootstrap/css/bootstrap.css'>
+</head>
+<body>
+
+<div class="page-header">
+  <h3 align="center">Config Server Dashboard </h3>
+</div>
+
+<div class="container-fluid">
+
+  <div class="row">
+    <div class="col-md-3">
+
+      <div class="panel panel-success">
+
+        <!-- 应用连接区域 -->
+        <div class="panel-heading">
+          <h2 class="panel-title">用户登录</h2>
+        </div>
+
+        <div class="panel-body">
+          <form onsubmit="return login(this)">
+
+            <div id="panel-login">
+            </div>
+            <br/>
+            <button type="submit" class="btn btn-default btn-block">
+              登  录 <span class="glyphicon glyphicon-log-in"></span>
+            </button>
+          </form>
+        </div>
+
+
+      </div>
+
+
+      <!-- 控制台区域 -->
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <h2 class="panel-title">控制台</h3>
+        </div>
+        <div class="panel-body">
+          <div id="consoles">
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="col-md-9">
+      <div id="main-area" class="panel panel-info">
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
+<script>
+function login(form) {
+  let appname = $('#appname').val();
+  let password = $('#password').val();
+
+  Controller.loginHandler(appname, password);
+  return false; // 防止页面刷新
+}
+
+</script>
+
+<!-- 主区域模板 -->
+<!-- 登录区域模板 -->
+<script id="login-template" type="text/x-handlebars-template">
+  <div class="input-group">
+
+    <span class="input-group-btn">
+      <button class="btn btn-default" type="button">登录类型</button>
+    </span>
+
+    <select id="login-type" class="form-control" onchange="Render.renderLogin(this.value); return false;">
+      <option value="user">普通用户登录</option>
+      <option value="admin">管理员登录</option>
+    </select>
+  </div>
+  <br />
+
+  {{#if admin}}
+    <div class="input-group">
+      <span class="input-group-btn">
+        <button class="btn btn-warning" type="button">用户</button>
+      </span>
+      <input type="text" id="appname" class="form-control" placeholder="Admin Username">
+    </div>
+
+    <div class="input-group">
+      <span class="input-group-btn">
+        <button class="btn btn-warning" type="button">密码</button>
+      </span>
+      <input type="password" id="password" class="form-control" placeholder="Admin Password">
+    </div>
+  {{else}}
+    <div class="input-group">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button">用户</button>
+      </span>
+      <input type="text" class="form-control" value="user" disabled>
+    </div>
+
+    <div class="input-group">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button">应用</button>
+      </span>
+      <input type="text" id="appname" class="form-control" placeholder="Application name">
+    </div>
+
+    <div class="input-group">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button">密码</button>
+      </span>
+      <input type="password" id="password" class="form-control" placeholder="Application Password">
+    </div>
+  {{/if}}
+</script>
+
+<!-- 应用列表模板 -->
+<script id="listapp-template" type="text/x-handlebars-template">
+  <div class="panel-heading">
+    <h2 class="panel-title">{{title}}</h2>
+  </div>
+
+  <div class="panel-body">
+
+    <button type="button" class="btn btn-success" onclick="Render.beforeCreateApp('新增应用'); return false">
+      <span class="glyphicon glyphicon-plus"></span> 新增应用
+    </button>
+
+    <hr/>
+
+    <table class="table table-striped">
+      <thead>
+      <td>应用名</td>
+      <td>操作</td>
+      </thead>
+
+      <tbody>
+      {{#each data}}
+      <tr>
+        <td>{{application}}</td>
+        <td>
+          <div class="btn-group">
+            <button type="button" class="btn btn-info"
+                    onclick="Render.beforeGetApp('应用详情', '{{application}}'); return false">查看应用详情
+            </button>
+            <button type="button" class="btn btn-danger"
+                    onclick="Render.beforeDeleteApp('删除应用', '{{application}}'); return false">
+              <span class="glyphicon glyphicon-remove"></span>删除应用
+            </button>
+          </div>
+        </td>
+      </tr>
+      {{/each}}
+      </tbody>
+    </table>
+  </div>
+
+</script>
+
+<!-- 应用详情模板 -->
+<script id="getapp-template" type="text/x-handlebars-template">
+  <div class="panel-heading">
+    <h2 class="panel-title">{{title}}</h2>
+  </div>
+
+  <div class="panel-body">
+    <form class="form-inline" onsubmit="return Controller.getApp(this)">
+
+      <div class="form-group">
+        {{#if appname}}
+        <div class="input-group">
+          <div class="input-group-addon">APPNAME</div>
+          <input id="getapp-appname" class="form-control" type="text" value={{appname}}>
+        </div>
+        {{else}}
+        <div class="input-group">
+          <div class="input-group-addon">APPNAME</div>
+          <input id="getapp-appname" class="form-control" type="text" placeholder="Application name">
+        </div>
+        {{/if}}
+
+        <div class="input-group">
+          <div class="input-group-addon"> LABEL</div>
+          <input id="getapp-label" class="form-control" type="text" placeholder="Search Label" value="master">
+        </div>
+
+        <div class="input-group">
+          <div class="input-group-addon"> PROFILE</div>
+          <input id="getapp-profile" class="form-control" type="text" placeholder="Search Profile" value="default">
+        </div>
+
+        <div class="input-group">
+          <div class="input-group-addon"> TYPE</div>
+          <select id="getapp-type" class="form-control">
+            <option>yml</option>
+            <option>json</option>
+            <option>yaml</option>
+            <option>properties</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-info">Search</button>
+      </div>
+
+    </form>
+
+    <br/>
+
+    <div id="common-result">
+    </div>
+  </div>
+
+</script>
+
+<!-- 创建应用模板 -->
+<script id="createapp-template" type="text/x-handlebars-template">
+  <div class="panel-heading">
+    <h2 class="panel-title">{{title}}</h2>
+  </div>
+
+  <div class="panel-body">
+    <form class="form-inline" onsubmit="Controller.createApp(this); return false">
+
+      <div class="form-group">
+        <div class="input-group">
+          <div class="input-group-addon"> APPNAME </div>
+          <input id="createapp-appname" class="form-control" type="text" placeholder="Application">
+        </div>
+
+        <div class="input-group">
+          <div class="input-group-addon"> PASSWORD </div>
+          <input id="createapp-password" class="form-control" type="password" placeholder="Password">
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-success">
+        <span class="glyphicon glyphicon-plus"></span>创建应用
+      </button>
+    </form>
+
+    <br/>
+
+    <div id="common-result">
+    </div>
+
+    <div class="jumbotron">
+      <h2 class="panel-title"> 新增应用——管理员手册 </h2>
+      <div id="createapp-tutorial">
+      </div>
+    </div>
+
+  </div>
+</script>
+
+<!-- 删除应用模板 -->
+<script id="deleteapp-template" type="text/x-handlebars-template">
+  <div class="panel-heading">
+    <h2 class="panel-title">{{title}}</h2>
+  </div>
+
+  <div class="panel-body">
+    <form class="form-inline" onsubmit="return Controller.deleteApp(this)">
+
+      <div class="form-group">
+        {{#if appname}}
+        <div class="input-group">
+          <div class="input-group-addon"> APPNAME</div>
+          <input id="deleteapp-appname" class="form-control" type="text" value={{appname}}>
+        </div>
+        {{else}}
+        <div class="input-group">
+          <div class="input-group-addon"> APPNAME</div>
+          <input id="deleteapp-appname" class="form-control" type="text" placeholder="appname for delete">
+        </div>
+        {{/if}}
+      </div>
+
+      <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span>删除应用</button>
+    </form>
+
+    <br/>
+
+    <div id="common-result">
+    </div>
+  </div>
+</script>
+
+<!-- 加密功能模板 -->
+<script id="encrypt-template" type="text/x-handlebars-template">
+  <div class="panel-heading">
+    <h2 class="panel-title">{{title}}</h2>
+  </div>
+
+  <div class="panel-body">
+    <form class="form-inline" onsubmit="return Controller.encrypt(this)">
+
+      <div class="form-group">
+        <div class="input-group">
+          <div class="input-group-addon"> ORIGIN TEXT</div>
+          <input id="encrypt-origintext" class="form-control" type="text" placeholder="Origin text">
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-info">加密</button>
+    </form>
+
+    <br/>
+
+    <div id="common-result">
+    </div>
+  </div>
+</script>
+
+<!-- 解密功能模板 -->
+<script id="decrypt-template" type="text/x-handlebars-template">
+  <div class="panel-heading">
+    <h2 class="panel-title">{{title}}</h2>
+  </div>
+
+  <div class="panel-body">
+    <form class="form" onsubmit="return Controller.decrypt(this)">
+
+      <div class="form-group">
+        <h3> 请输入密文 </h3>
+        <textarea id="decrypt-origintext" class="form-control" rows="6" placeholder="Decrypted text"/>
+      </div>
+
+      <button type="submit" class="btn btn-info">解密</button>
+    </form>
+
+    <br/>
+
+    <div id="common-result">
+    </div>
+  </div>
+</script>
+
+<!-- Required Javascript -->
+<script src="/webjars/jquery/jquery.js"></script>
+<script src="/webjars/bootstrap-treeview/js/bootstrap-treeview.js"></script>
+<script src="/webjars/handlebars/handlebars.js"></script>
+<script src="/webjars/remarkable/remarkable.js"></script>
+<script src="js/config.js"></script>
+<script src="js/service.js"></script>
+<script src="js/render.js"></script>
+<script src="js/controller.js"></script>
+
+</body>
+</html>

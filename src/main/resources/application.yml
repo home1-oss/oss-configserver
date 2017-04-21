@@ -1,0 +1,251 @@
+
+# configserver
+
+app:
+  adminPublicKey: ${APP_ADMINPUBLICKEY:RSA1024_PUB_X509:MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC/gmBcdQZxiQmhQrP1awAZuuOl4snl7cEV8n65osVO7CdqxXG5mUYNVr6siwuTm/SsmBV+86JISlzvMK/Bxwsmf/ApZicgItChmDuU9TCaZIksqnpbtONnCm/sHWwa/2hqPTjdc0LC+jQ/FCU2b9vpbSId0Wg28/gtoGaLWbsm/QIDAQAB}
+
+logging.level.: ${LOGGING_LEVEL_:INFO}
+logging:
+  file: ${LOGGING_FILE:oss-configserver}.log
+  path: ${LOGGING_PATH:${user.home}/data/oss-configserver/logs}
+  level:
+    jndi: ${LOGGING_LEVEL_:INFO}
+    com.zaxxer.hikari.pool: ${LOGGING_LEVEL_:INFO}
+    com.yirendai.oss.lib.common.FileAndClasspathUtils$AssignableFilter: ${LOGGING_LEVEL_:INFO}
+    org.eclipse.jetty: ${LOGGING_LEVEL_:INFO}
+    org.eclipse.jetty.jndi: ${LOGGING_LEVEL_:INFO}
+    org.eclipse.jetty.server.session: ${LOGGING_LEVEL_:INFO}
+    org.eclipse.jetty.util.DecoratedObjectFactory: ${LOGGING_LEVEL_:INFO}
+    org.springframework.amqp: ${LOGGING_LEVEL_:INFO}
+    org.springframework.beans.factory.annotation.InjectionMetadata: ${LOGGING_LEVEL_:INFO}
+    org.springframework.beans.factory.support.DefaultListableBeanFactory: ${LOGGING_LEVEL_:INFO}
+    org.springframework.core.env.MutablePropertySources: ${LOGGING_LEVEL_:INFO}
+    org.springframework.core.env.PropertySourcesPropertyResolver: ${LOGGING_LEVEL_:INFO}
+    org.springframework.jndi: ${LOGGING_LEVEL_:INFO}
+    org.springframework.core.type.classreading.AnnotationAttributesReadingVisitor: INFO
+    org.springframework.web.context.support.StandardServletEnvironment: ${LOGGING_LEVEL_:INFO}
+
+endpoints.health.sensitive: true
+
+management:
+  #port:
+  context-path: ${MANAGEMENT_CONTEXTPATH:/manage}
+  security:
+    enabled: true
+    roles: ADMIN # no ROLE_ prefix here
+
+security:
+  #ignored: '/css/**,/js/**,/images/**,/webjars/**,/**/favicon.ico' #,/swagger-ui.html,/swagger-resources/**,/v2/**
+  ignored: '/,/index.html,/webjars/**,/css/**,/js/**,/**/favicon.ico'
+  user:
+    name: ${SECURITY_USER_NAME:admin}
+    password: ${SECURITY_USER_PASSWORD:admin_pass}
+    role: ADMIN
+
+server:
+  port: ${SERVER_PORT:8888}
+  tomcat:
+    accesslog:
+      # Enable access log:
+      enabled: true
+      # Directory in which log files are created. Can be relative to the tomcat base dir or absolute:
+      directory: logs
+      # Format pattern for access logs:
+      # https://tomcat.apache.org/tomcat-8.0-doc/config/valve.html#Access_Log_Valve
+      pattern: '%h %l %u %t "%r" %s %b %D'
+      # Log file name suffix:
+      suffix: .log
+
+spring.cloud:
+  client.hostname: ${SPRING_CLOUD_CLIENT_HOSTNAME:local-configserver}
+  config:
+    server:
+      common-config:
+        application: ${SPRING_CLOUD_CONFIG_SERVER_COMMONCONFIG_APPLICATION:common}
+        enabled: true
+        git:
+          #uri: ${GIT_PREFIX:git@gitlab.internal:configserver}/${spring.cloud.config.server.common-config.application}-config.git
+          uri: ${GIT_PREFIX:git@local-git:configserver}/${spring.cloud.config.server.common-config.application}-config.git
+          #searchPaths: src/main/resources
+        label: ${SPRING_CLOUD_CONFIG_SERVER_COMMONCONFIG_LABEL:master}
+      defaultLabel: ${SPRING_CLOUD_CONFIG_SERVER_DEFAULTLABEL:master}
+      defaultProfile: ${SPRING_CLOUD_CONFIG_SERVER_DEFAULTPROFILE:default}
+      deployKey: ${SPRING_CLOUD_CONFIG_SERVER_DEPLOYKEY:classpath:deploy_key} # A custom property
+      prefix: /config
+      git:
+        #uri: ${GIT_PREFIX:https://local-git:20080/configserver}/all-applications-in-one-repo-config.git # can use wildcard
+        #uri: ${GIT_PREFIX:http://local-git:20080/configserver}/{application}-config.git # can use wildcard # http or https
+        #username: git_username
+        #password: git_password
+        #uri: ${GIT_PREFIX:git@gitlab.internal:configserver}/{application}-config.git # SSH
+        uri: ${GIT_PREFIX:git@local-git:configserver}/{application}-config.git # SSH
+        #searchPaths: src/main/resources # search locations
+        #basedir: /var/configserver # default is /tmp, file lost after restart
+        #repos:  # multi repos, match by 'application/profile'
+        #  simple: https://github.com/simple/config-repo
+        #  special:
+        #    pattern: special*/dev*,*special*/dev*
+        #    uri: ${GIT_PREFIX:git@gitlab.internal:configserver}/some-application.git
+        #    searchPaths: src/main/resources
+      #overrides: # override properties
+      #  test_a: bbb
+      #  test_b: aaa
+      monitor:
+        bitbucket.enabled: ${SPRING_CLOUD_CONFIG_SERVER_MONITOR_BITBUCKET_ENABLED:false}
+        github.enabled: ${SPRING_CLOUD_CONFIG_SERVER_MONITOR_GITHUB_ENABLED:false}
+        gitlab.enabled: ${SPRING_CLOUD_CONFIG_SERVER_MONITOR_GITLAB_ENABLED:false}
+        gitlabpath.enabled: ${SPRING_CLOUD_CONFIG_SERVER_MONITOR_GITLABPATH_ENABLED:true}
+        whitelist: ${SPRING_CLOUD_CONFIG_SERVER_MONITOR_WHITELIST:}
+
+eureka:
+  instance:
+    # eureka.instance.hostname affect Status->instances's url href (not text) value on dashboard
+    hostname: ${EUREKA_INSTANCE_HOSTNAME:local-configserver}
+    prefer-ip-address: ${EUREKA_INSTANCE_PREFER_IP_ADDRESS:false}
+    # eureka.instance.instance-id affect Status->instances's url text (not href) value on dashboard
+    instance-id: ${spring.application.name}:${EUREKA_INSTANCE_HOSTNAME:local-configserver}:${EUREKA_INSTANCE_NONSECUREPORT:${SERVER_PORT:8888}}:${random.value}
+    nonSecurePort: ${EUREKA_INSTANCE_NONSECUREPORT:8888}
+    leaseRenewalIntervalInSeconds: 10
+    statusPageUrlPath: ${server.context-path:${SERVER_CONTEXTPATH:}}${management.context-path:${MANAGEMENT_CONTEXTPATH:}}${endpoints.info.path:/info}
+    healthCheckUrlPath: ${server.context-path:${SERVER_CONTEXTPATH:}}${management.context-path:${MANAGEMENT_CONTEXTPATH:}}${endpoints.health.path:/health}
+    # Registering a Secure Application
+    #statusPageUrl: https://${eureka.instance.hostname}${endpoints.info.path:/info}
+    #healthCheckUrl: https://${eureka.instance.hostname}${endpoints.health.path:/health}
+    #homePageUrl: https://${eureka.instance.hostname}/
+    metadataMap:
+      #instance-id: ${spring.application.name}:${EUREKA_INSTANCE_HOSTNAME:local-configserver}:${EUREKA_INSTANCE_NONSECUREPORT:${SERVER_PORT:8888}}:${random.value}
+      #user: ${security.user.name} # hide admin user
+      #password: ${security.user.password} # hide admin password
+      configPath: ${spring.cloud.config.server.prefix}
+      management.context-path: ${server.context-path:${SERVER_CONTEXTPATH:}}${management.context-path:${MANAGEMENT_CONTEXTPATH:}}
+      management.port: ${management.port:${MANAGEMENT_PORT:${server.port:${SERVER_PORT:8080}}}}
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://user:user_pass@local-eureka:8761/eureka/}
+
+spring.data.jpa.repositories.enabled: false # Enable JPA repositories.
+spring.datasource:
+  continue-on-error: false # Do not stop if an error occurs while initializing the database.
+  platform: h2
+  #data: data-${platform}.sql # Data (DML) script resource reference.
+  schema: classpath:/schema-h2.sql # DDL script resource reference.
+  initialize: true # Populate the database using 'data.sql'.
+  jmx-enabled: false # Enable JMX support (if provided by the underlying pool).
+  #jndi-name:  # JNDI location of the datasource. Class, url, username & password are ignored when set.
+  maximum-pool-size: 10
+  minimum-idle: 5
+  name: dataSource
+  test-while-idle: true
+  time-between-eviction-runs-millis: 1
+  validation-query: 'SELECT 1'
+  type: 'com.zaxxer.hikari.HikariDataSource'
+  driver-class-name: 'org.h2.Driver'
+  url: jdbc:h2:${DB_ADDR:~/data/oss-configserver/h2}
+  #url: jdbc:h2:${DB_ADDR:mem}:${DB_NAME:oss-configserver}
+  username: ${DB_PASS:sa}
+  #password: ${DB_PASS:}
+
+# H2 Web Console (H2ConsoleProperties)
+spring.h2.console:
+  enabled: true # Enable the console.
+  path: '/h2-console' # Path at which the console will be available.
+  web-allow-others: true
+
+# JPA (JpaBaseConfiguration, HibernateJpaAutoConfiguration)
+spring.jpa:
+  database: H2 # Target database to operate on, auto-detected by default. Can be alternatively set using the "databasePlatform" property.
+  database-platform: 'org.hibernate.dialect.H2Dialect' # Name of the target database to operate on, auto-detected by default. Can be alternatively set using the "Database" enum.
+  #generate-ddl: true # Initialize the schema on startup.
+  hibernate.ddl-auto: none # DDL mode. This is actually a shortcut for the "hibernate.hbm2ddl.auto" property. Default to "create-drop" when using an embedded database, "none" otherwise.
+  hibernate.naming-strategy: 'org.hibernate.cfg.ImprovedNamingStrategy' # Naming strategy fully qualified name.
+  #hibernate.naming-strategy: 'spring.jpa.hibernate.naming_strategy=org.hibernate.cfg.EJB3NamingStrategy' # uppercase name
+  #open-in-view: true # Register OpenEntityManagerInViewInterceptor. Binds a JPA EntityManager to the thread for the entire processing of the request.
+  show-sql: true # Enable logging of SQL statements.
+  #properties.*: # Additional native properties to set on the JPA provider.
+
+spring:
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST:local-cloudbus}
+    port: ${SPRING_RABBITMQ_PORT:5672}
+    username: ${SPRING_RABBITMQ_USERNAME:user}
+    password: ${SPRING_RABBITMQ_PASSWORD:user_pass}
+
+---
+spring:
+  profiles: default
+
+---
+spring:
+  profiles: development.env
+
+spring.resources:
+  cache-period: 0
+
+---
+spring:
+  profiles: ut.env
+
+spring.datasource:
+  url: jdbc:h2:mem:oss-configserver
+
+spring.h2.console.enabled: false
+
+---
+spring:
+  profiles: it.env
+
+spring.datasource:
+  url: jdbc:h2:mem:oss-configserver
+
+spring.h2.console.enabled: false
+
+---
+spring:
+  profiles: staging.env
+
+spring.datasource:
+  platform: mysql
+  schema: classpath:/schema-mysql.sql
+  initialize: true
+  driver-class-name: com.mysql.jdbc.Driver
+  url: jdbc:mysql://${DB_ADDR:local-mysql}:${DB_PORT:3306}/${DB_NAME:oss-configserver}?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+  username: ${DB_USER:user}
+  password: ${DB_PASS:user_pass}
+
+spring.h2.console:
+  enabled: false
+  web-allow-others: false
+
+spring.jpa:
+  database: MYSQL
+  database-platform: 'org.hibernate.dialect.MySQL5InnoDBDialect'
+  generate-ddl: false
+  hibernate.ddl-auto: none
+  show-sql: false
+
+---
+spring:
+  profiles: production.env
+
+spring.resources:
+  cache-period: 86400
+
+spring.datasource:
+  platform: mysql
+  schema: classpath:/schema-mysql.sql
+  initialize: true
+  driver-class-name: com.mysql.jdbc.Driver
+  url: jdbc:mysql://${DB_ADDR:local-mysql}:${DB_PORT:3306}/${DB_NAME:oss-configserver}?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+  username: ${DB_USER:user}
+  password: ${DB_PASS:user_pass}
+
+spring.h2.console:
+  enabled: false
+  web-allow-others: false
+
+spring.jpa:
+  database: MYSQL
+  database-platform: 'org.hibernate.dialect.MySQL5InnoDBDialect'
+  generate-ddl: false
+  hibernate.ddl-auto: none
+  show-sql: false

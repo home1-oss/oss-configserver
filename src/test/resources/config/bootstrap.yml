@@ -1,0 +1,22 @@
+# TODO delete me, many errors
+
+spring:
+  cloud:
+    config:
+      enabled: true
+      discovery:
+        enabled: false
+
+      label: master
+      uri: http://user:user_pass@localhost:8888
+
+  application:
+    name: configserver-it
+  config:
+    name: configserver-it  # This config is to stop the client web app to read the application.yml in the path.
+
+security.basic.enabled: false
+management.security.enabled: false
+server.port: ${app.port:8080}
+
+

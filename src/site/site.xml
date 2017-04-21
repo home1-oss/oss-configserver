@@ -1,0 +1,16 @@
+<project>
+
+    <body>
+        <menu ref="parent" />
+        <menu name="DOCUMENTATION">
+            <item href="README.html" name="README" />
+            <item href="MANUAL_FOR_USER.html" name="用户手册" />
+            <item href="MANUAL_FOR_ADMIN.html" name="管理手册" />
+            <item href="MANUAL_FOR_OPS.html" name="运维手册" />
+            <item href="CONTRIBUTION.html" name="开发" />
+            <item href="PERFORMANCE.html" name="压力测试" />
+        </menu>
+        <menu ref="modules" />
+        <menu ref="reports" inherit="bottom" />
+    </body>
+</project>

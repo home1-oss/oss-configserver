@@ -1,0 +1,40 @@
+
+spring:
+  application:
+    name: ${SPRING_APPLICATION_NAME:local-configserver}
+  cloud:
+    config:
+      enabled: false
+
+encrypt: # asymmetric encryption
+  failOnError: false
+  keyStore:
+    alias: ${ENCRYPT_KEYSTORE_ALIAS:key_alias}
+    secret: ${ENCRYPT_KEYSTORE_SECRET:key_pass}
+    password: ${ENCRYPT_KEYSTORE_PASSWORD:store_pass}
+    location: ${ENCRYPT_KEYSTORE_LOCATION:classpath:keystore.jks}
+#encrypt.key: changeme # symmetric encryption
+
+---
+spring:
+  profiles: default
+
+---
+spring:
+  profiles: development.env
+
+---
+spring:
+  profiles: ut.env
+
+---
+spring:
+  profiles: it.env
+
+---
+spring:
+  profiles: staging.env
+
+---
+spring:
+  profiles: production.env
