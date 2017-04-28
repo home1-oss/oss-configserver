@@ -1,7 +1,10 @@
 addons:
   apt:
     packages:
+    - gnupg
+    - gnupg2
     - graphviz
+    - openssl
 before_install:
 - wget https://archive.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.zip
 - unzip -qq apache-maven-3.3.9-bin.zip
@@ -11,14 +14,23 @@ branches:
   only:
   - master
   - develop
-  - build_on_trivasci
+  - /^feature\/.*$/
+  - /^hotfix\/.*$/
+  - /^release\/.*$/
+  - /^v\d+\.\d+(\.\d+)?(-\S*)?/
 cache:
   directories:
-  - "$HOME/.m2"
   - "$HOME/.cache"
+  - "$HOME/.m2"
   - "$HOME/.sonar/cache"
+
 env:
   global:
+# if refer some release version please modify this var to oss-build version that has bean released, ex: v1.0.9.OSS
+# OSS_BUILD_CONFIG_REF_BRANCH refer to oss-github repo version
+#  - OSS_BUILD_REF_BRANCH=v1.0.9.OSS or release/1.0.9.OSS
+  - OSS_BUILD_REF_BRANCH=develop
+  - OSS_BUILD_CONFIG_REF_BRANCH=develop
   - CI_BUILD_REF_NAME=$TRAVIS_BRANCH
   - GIT_SERVICE=https://github.com
   - INFRASTRUCTURE=github
@@ -29,7 +41,8 @@ jdk:
 language: java
 script:
 - echo "on_every_push"
-- bash ci.sh test_and_build && bash ci.sh publish_snapshot
+- bash ci.sh analysis && bash ci.sh test_and_build && bash ci.sh publish_snapshot && bash ci.sh publish_maven_site
+
 services:
 - docker
 sudo: required
