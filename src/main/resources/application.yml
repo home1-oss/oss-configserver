@@ -11,7 +11,7 @@ logging:
   level:
     jndi: ${LOGGING_LEVEL_:INFO}
     com.zaxxer.hikari.pool: ${LOGGING_LEVEL_:INFO}
-    com.yirendai.oss.lib.common.FileAndClasspathUtils$AssignableFilter: ${LOGGING_LEVEL_:INFO}
+    cn.home1.oss.lib.common.FileAndClasspathUtils$AssignableFilter: ${LOGGING_LEVEL_:INFO}
     org.eclipse.jetty: ${LOGGING_LEVEL_:INFO}
     org.eclipse.jetty.jndi: ${LOGGING_LEVEL_:INFO}
     org.eclipse.jetty.server.session: ${LOGGING_LEVEL_:INFO}

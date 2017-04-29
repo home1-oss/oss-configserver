@@ -3,7 +3,7 @@
 <suite name="config server" verbose="1" >
     <test name="config server" preserve-order="true">
         <packages>
-            <package name="com.yirendai.oss.environment.configserver" />
+            <package name="cn.home1.oss.environment.configserver" />
         </packages>
     </test>
 </suite>

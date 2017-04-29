@@ -5,35 +5,36 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.yirendai.infra</groupId>
+        <groupId>cn.home1</groupId>
         <artifactId>oss-build</artifactId>
-        <version>1.0.8.OSS-SNAPSHOT</version>
+        <version>1.0.9.OSS</version>
     </parent>
 
     <artifactId>oss-configserver</artifactId>
+    <description>Configserver</description>
     <name>oss-configserver</name>
     <packaging>jar</packaging>
-    <version>1.0.6.OSS-SNAPSHOT</version>
     <url>https://github.com/home1-oss/oss-configserver</url>
+    <version>1.0.6.OSS</version>
 
+    <ciManagement>
+        <system>Travis CI</system>
+        <url>https://travis-ci.org/home1-oss/oss-configserver</url>
+    </ciManagement>
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/home1-oss/oss-configserver/issues</url>
+    </issueManagement>
     <scm>
         <connection>scm:git:https://github.com/home1-oss/oss-configserver.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/home1-oss/oss-configserver.git</developerConnection>
         <url>https://github.com/home1-oss/oss-configserver</url>
     </scm>
-    <issueManagement>
-        <system>GitHub Issues</system>
-        <url>https://github.com/home1-oss/oss-configserver/issues</url>
-    </issueManagement>
-    <ciManagement>
-        <system>Travis CI</system>
-        <url>https://travis-ci.org/home1-oss/oss-configserver</url>
-    </ciManagement>
 
     <properties>
         <dnsjava.version>2.1.7</dnsjava.version>
         <spring-boot.version>1.4.1.RELEASE</spring-boot.version>
-        <oss-release.version>1.0.6.OSS-SNAPSHOT</oss-release.version>
+        <oss-release.version>1.0.6.OSS</oss-release.version>
 
         <webjars-locator.version>0.30</webjars-locator.version>
         <webjars-bootstrap-treeview.version>1.2.0</webjars-bootstrap-treeview.version>
@@ -48,7 +49,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
                 <configuration>
-                    <mainClass>com.yirendai.oss.environment.configserver.ConfigServer</mainClass>
+                    <mainClass>cn.home1.oss.environment.configserver.ConfigServer</mainClass>
                     <classifier>exec</classifier>
                     <layout>ZIP</layout>
                     <excludes>
@@ -91,7 +92,7 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.yirendai.infra</groupId>
+                <groupId>cn.home1</groupId>
                 <artifactId>oss-release-spring-boot-${spring-boot.version}</artifactId>
                 <version>${oss-release.version}</version>
                 <type>pom</type>
@@ -102,11 +103,11 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.yirendai.infra</groupId>
+            <groupId>cn.home1</groupId>
             <artifactId>oss-lib-swagger-spring-boot-${spring-boot.version}</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.yirendai.infra</groupId>
+            <groupId>cn.home1</groupId>
             <artifactId>oss-lib-adminclient-spring-boot-${spring-boot.version}</artifactId>
         </dependency>
 

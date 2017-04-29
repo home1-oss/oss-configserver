@@ -38,6 +38,7 @@ _site/
 .factorypath
 .profiler
 git.properties
+codesigning.asc
 
 deprecated/
 **/src/main/docker/Dockerfile
