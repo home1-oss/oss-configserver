@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
 if [ -f codesigning.asc.enc ] && [ "${TRAVIS_PULL_REQUEST}" == 'false' ]; then
-    openssl aes-256-cbc -K $encrypted_f1fe46eea14b_key -iv $encrypted_f1fe46eea14b_iv -in codesigning.asc.enc -out codesigning.asc -d
+    openssl aes-256-cbc -K $encrypted_f61762e00f36_key -iv $encrypted_f61762e00f36_iv -in codesigning.asc.enc -out codesigning.asc -d
     gpg --fast-import codesigning.asc
 fi
+
 
 ### OSS CI CONTEXT VARIABLES BEGIN
 if ([ -z "${CI_BUILD_REF_NAME}" ] && [ -n "${TRAVIS_BRANCH}" ]); then CI_BUILD_REF_NAME="${TRAVIS_BRANCH}"; fi
@@ -47,15 +48,15 @@ if ([ "${GIT_REPO_OWNER}" == "${BUILD_HOME1_OSS_OWNER}" ] && [ "pull_request" !=
         release*)
             export BUILD_PUBLISH_CHANNEL="release";
             if [ "${1}" == "publish_snapshot" ]; then
-                publish_release ;
+                publish_release
             elif [ "${1}" == "analysis" ]; then
                 echo "skip analysis as not at develop branch";
             else
-                $@;
+                $@
             fi
             ;;
         feature*|hotfix*|"master"|*)
-            if [ "${1}" == "test_and_build" ]; then $@ ; fi
+            if [ "${1}" == "test_and_build" ]; then $@; fi
             echo "on this condition only trigger test_and_build,CI_BUILD_REF_NAME=${CI_BUILD_REF_NAME}"
             ;;
     esac
