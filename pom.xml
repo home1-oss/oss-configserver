@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>oss-configserver</artifactId>
+    <description>Configserver</description>
     <name>oss-configserver</name>
     <packaging>jar</packaging>
     <url>https://github.com/home1-oss/oss-configserver</url>
