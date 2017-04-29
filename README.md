@@ -61,12 +61,12 @@ pom.xml:
         <modelVersion>4.0.0</modelVersion>
     
         <parent>
-          <groupId>org.yirendai.infra</groupId>
+          <groupId>cn.home1</groupId>
           <artifactId>oss-build</artifactId>
           <version>${oss-build.version}</version>
         </parent>
     
-        <groupId>com.yirendai</groupId>
+        <groupId>cn.home1</groupId>
         <artifactId>foo</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <packaging>jar</packaging>
@@ -78,7 +78,7 @@ pom.xml:
         <dependencyManagement>
             <dependencies>
                 <dependency>
-                    <groupId>com.yirendai.infra</groupId>
+                    <groupId>cn.home1</groupId>
                     <artifactId>oss-release-spring-boot-${spring-boot.version}</artifactId>
                     <version>${oss-release.version}</version>
                     <type>pom</type>
