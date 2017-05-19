@@ -96,7 +96,12 @@ spring.cloud:
         gitlab.enabled: ${SPRING_CLOUD_CONFIG_SERVER_MONITOR_GITLAB_ENABLED:false}
         gitlabpath.enabled: ${SPRING_CLOUD_CONFIG_SERVER_MONITOR_GITLABPATH_ENABLED:true}
         whitelist: ${SPRING_CLOUD_CONFIG_SERVER_MONITOR_WHITELIST:}
-
+#      health:          # configserver repository health
+#        enabled: true  #default true
+#        repositories:
+#          "common":
+#            name: "application"
+#            label: "master"
 eureka:
   instance:
     # eureka.instance.hostname affect Status->instances's url href (not text) value on dashboard
