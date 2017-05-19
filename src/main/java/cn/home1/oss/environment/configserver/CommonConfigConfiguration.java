@@ -6,23 +6,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.config.server.config.ConfigServerHealthIndicator;
 import org.springframework.cloud.config.server.config.ConfigServerProperties;
-import org.springframework.cloud.config.server.config.EnvironmentRepositoryConfiguration;
 import org.springframework.cloud.config.server.environment.EnvironmentRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 @Configuration
-@ConditionalOnMissingBean(EnvironmentRepository.class)
 @ConditionalOnProperty(prefix = "spring.cloud.config.server.commonConfig", name = "enabled", havingValue = "true")
-public class CommonConfigConfiguration extends EnvironmentRepositoryConfiguration {
+public class CommonConfigConfiguration {
+
+
+  @Bean
+  @ConditionalOnProperty(value = "spring.cloud.config.server.health.enabled", matchIfMissing = true)
+  public ConfigServerHealthIndicator configServerHealthIndicator(EnvironmentRepository repository) {
+    return new ConfigServerHealthIndicator(repository);
+  }
+
 
   @Configuration
   @ConditionalOnMissingBean(EnvironmentRepository.class)
   @ConditionalOnProperty(prefix = "spring.cloud.config.server.commonConfig.git", name = "uri")
   @EnableConfigurationProperties(value = {ConfigServerProperties.class, CommonConfigProperties.class})
-  public static class GitRepositoryConfiguration {
+  public static class OssGitRepositoryConfiguration {
 
     @Autowired
     private ConfigurableEnvironment environment;
