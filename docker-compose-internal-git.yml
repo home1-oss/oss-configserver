@@ -4,7 +4,7 @@
 version: '2.1'
 services:
   configserver:
-    image: ${DOCKER_REGISTRY:-registry.docker.local}/oss-configserver:${PROJECT_VERSION:-latest}
+    image: home1oss/oss-configserver:${PROJECT_VERSION:-latest}
     restart: always
     command: []
     container_name: ${EUREKA_INSTANCE_HOSTNAME:-local-configserver}
