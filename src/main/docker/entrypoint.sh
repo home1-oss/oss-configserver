@@ -5,8 +5,9 @@
 
 
 if [ -z "${GIT_HOST}" ]; then echo "GIT_HOST not defined."; exit 1; fi
+if [ -z "${GIT_SSH_PORT}" ]; then GIT_SSH_PORT="22"; fi
 # ping ${GIT_HOST} -c 1
-if [ ! -z "${GIT_HOST}" ]; then echo "wait ${GIT_HOST}:22 for 30 seconds."; /usr/bin/waitforit -full-connection=tcp://${GIT_HOST}:22 -timeout=30; fi
+if [ ! -z "${GIT_HOST}" ]; then echo "wait ${GIT_HOST}:${GIT_SSH_PORT} for 30 seconds."; /usr/bin/waitforit -full-connection=tcp://${GIT_HOST}:${GIT_SSH_PORT} -timeout=30; fi
 # rabbit mq is password protected, so try http management port
 if [ ! -z "${SPRING_RABBITMQ_HOST}" ] && [ ! -z "${SPRING_RABBITMQ_PORT}" ]; then echo "wait ${SPRING_RABBITMQ_HOST}:1${SPRING_RABBITMQ_PORT} for 30 seconds."; /usr/bin/waitforit -full-connection=tcp://${SPRING_RABBITMQ_HOST}:1${SPRING_RABBITMQ_PORT} -timeout=30; fi
 
@@ -29,7 +30,7 @@ exec "$@"
 #    local target=$1
 #    local result=""
 #    if [ -z "${SPRING_CLOUD_CONFIG_SERVER_DEPLOYKEY}" ]; then
-#        extract_file_from_archive ${archive} BOOT-INF/classes/deploy_key.pub ${target}
+#        extract_file_from_archive ${archive} BOOT-INF/classes/default_deploy_key.pub ${target}
 #        if [ -f ${target} ]; then
 #            result=${target}
 #        else

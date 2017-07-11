@@ -19,7 +19,7 @@ public class ConfigTest {
   //@BeforeSuite
   public void prepareTestContext() {
     Properties properties = new Properties();
-    properties.put("GIT_PREFIX", "git@gitlab.internal:configserver");
+    properties.put("GIT_PREFIX", "git@gitlab.internal:home1-oss");
     System.setProperties(properties);
 
     ConfigServer.main();

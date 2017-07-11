@@ -168,7 +168,7 @@ spring.cloud:
 应用名称(spring.application.name)为: foo  
 那么配置git仓库就是: http://gitlab.internal/groups/configserver/foo-config
 
-clone 配置git仓库 `git clone git@gitlab.internal:configserver/foo-config.git`  
+clone 配置git仓库 `git clone git@gitlab.internal:home1-oss/foo-config.git`  
 创建application.yml
 ```
 # foo-config

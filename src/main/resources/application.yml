@@ -64,28 +64,28 @@ spring.cloud:
         application: ${SPRING_CLOUD_CONFIG_SERVER_COMMONCONFIG_APPLICATION:common}
         enabled: true
         git:
-          #uri: ${GIT_PREFIX:git@gitlab.internal:configserver}/${spring.cloud.config.server.common-config.application}-config.git
-          uri: ${GIT_PREFIX:git@gitlag.local:configserver}/${spring.cloud.config.server.common-config.application}-config.git
+          #uri: ${GIT_PREFIX:git@gitlab.internal:home1-oss}/${spring.cloud.config.server.common-config.application}-config.git
+          uri: ${GIT_PREFIX:ssh://git@gitlab.local:20022/home1-oss}/${spring.cloud.config.server.common-config.application}-config.git
           #searchPaths: src/main/resources
         label: ${SPRING_CLOUD_CONFIG_SERVER_COMMONCONFIG_LABEL:master}
       defaultLabel: ${SPRING_CLOUD_CONFIG_SERVER_DEFAULTLABEL:master}
       defaultProfile: ${SPRING_CLOUD_CONFIG_SERVER_DEFAULTPROFILE:default}
-      deployKey: ${SPRING_CLOUD_CONFIG_SERVER_DEPLOYKEY:classpath:deploy_key} # A custom property
+      deployKey: ${SPRING_CLOUD_CONFIG_SERVER_DEPLOYKEY:classpath:default_deploy_key} # A custom property
       prefix: /config
       git:
-        #uri: ${GIT_PREFIX:https://gitlab.local:20080/configserver}/all-applications-in-one-repo-config.git # can use wildcard
-        #uri: ${GIT_PREFIX:http://gitlab.local:20080/configserver}/{application}-config.git # can use wildcard # http or https
+        #uri: ${GIT_PREFIX:https://gitlab.local:20080/home1-oss}/all-applications-in-one-repo-config.git # can use wildcard
+        #uri: ${GIT_PREFIX:http://gitlab.local:20080/home1-oss}/{application}-config.git # can use wildcard # http or https
         #username: git_username
         #password: git_password
-        #uri: ${GIT_PREFIX:git@gitlab.internal:configserver}/{application}-config.git # SSH
-        uri: ${GIT_PREFIX:git@gitlab.local:configserver}/{application}-config.git # SSH
+        #uri: ${GIT_PREFIX:git@gitlab.internal:home1-oss}/{application}-config.git # SSH
+        uri: ${GIT_PREFIX:ssh://git@gitlab.local:20022/home1-oss}/{application}-config.git # SSH
         #searchPaths: src/main/resources # search locations
         #basedir: /var/configserver # default is /tmp, file lost after restart
         #repos:  # multi repos, match by 'application/profile'
         #  simple: https://github.com/simple/config-repo
         #  special:
         #    pattern: special*/dev*,*special*/dev*
-        #    uri: ${GIT_PREFIX:git@gitlab.internal:configserver}/some-application.git
+        #    uri: ${GIT_PREFIX:git@gitlab.internal:home1-oss}/some-application.git
         #    searchPaths: src/main/resources
       #overrides: # override properties
       #  test_a: bbb
@@ -96,7 +96,7 @@ spring.cloud:
         gitlab.enabled: ${SPRING_CLOUD_CONFIG_SERVER_MONITOR_GITLAB_ENABLED:false}
         gitlabpath.enabled: ${SPRING_CLOUD_CONFIG_SERVER_MONITOR_GITLABPATH_ENABLED:true}
         whitelist: ${SPRING_CLOUD_CONFIG_SERVER_MONITOR_WHITELIST:}
-#      health:          # configserver repository health
+#      health: # configserver repository health
 #        enabled: true  #default true
 #        repositories:
 #          "common":

@@ -69,7 +69,7 @@ public class ConfigServer {
       final String userHome = System.getProperty("user.home");
       final String dataDir = userHome + "/data/configserver";
       FileUtils.forceMkdir(new File(dataDir));
-      final File targetFile = new File(dataDir + "/deploy_key");
+      final File targetFile = new File(dataDir + "/default_deploy_key");
       FileUtils.copyInputStreamToFile(initialStream, targetFile);
       deployKeyPath = targetFile.getPath();
     } else if (deployKey.startsWith("file:")) {

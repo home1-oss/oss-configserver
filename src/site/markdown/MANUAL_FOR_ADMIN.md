@@ -70,9 +70,9 @@
 
 ## Generate a keypair for accessing git repository
 
-    ssh-keygen -t rsa -b 2048 -f src/main/resources/deploy_key -q -N "" -C "configserver@home1.cn"
+    ssh-keygen -t rsa -b 2048 -f src/main/resources/default_deploy_key -q -N "" -C "configserver@home1.cn"
 
-  Use src/main/resources/deploy_key.pub as deploy key in config projects.
+  Use src/main/resources/default_deploy_key.pub as deploy key in config projects.
   Default one is 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDJexpGshox4d2mRhYIjOjxlAmcF9k9fKzlr2ylKS32LwMrVeKY+XyV06YvX0FE0uwj3DSp2Vai2e8kEylRDhQmuV1ZjjA08P9/j9SacFuzY8TfncdUwsQ3wxmBjmlpQoODUad7v0ld0r1AfttqbfGJr8L5gPzxvoA96K+6PkYyzUwbStJiW0ruNEVOb5LgN/v90LWMorwXj2Y/fu+i5OWp+iCTrQ6ltC6xQ/f3MyRMbfUxW3cXNp9UkdVkFDJ4Le/5poim5yPi6d2vjG8z7h5hM7M+H7q72hVoH9Rx0yzp55jOSRMXDGU138pK6HQFU/mCw9yaT0OwGK5IdvaX+ryd configserver@home1.cn'
 
 ## Run git service or use public git service
