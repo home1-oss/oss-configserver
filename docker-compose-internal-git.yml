@@ -1,5 +1,5 @@
 
-# local-configserver with a internal git service, for development, Use H2 as datasource.
+# configserver with a internal git service, for development, Use H2 as datasource.
 
 version: '2.1'
 services:
@@ -7,8 +7,8 @@ services:
     image: home1oss/oss-configserver:${PROJECT_VERSION:-latest}
     restart: always
     command: []
-    container_name: ${EUREKA_INSTANCE_HOSTNAME:-local-configserver}
-    hostname: ${EUREKA_INSTANCE_HOSTNAME:-local-configserver}
+    container_name: ${EUREKA_INSTANCE_HOSTNAME:-configserver.local}
+    hostname: ${EUREKA_INSTANCE_HOSTNAME:-configserver.local}
     ports:
     - "${EUREKA_INSTANCE_NONSECUREPORT:-8888}:${SERVER_PORT:-8888}"
     volumes:
@@ -27,13 +27,13 @@ services:
     - ENCRYPT_KEYSTORE_LOCATION=${ENCRYPT_KEYSTORE_LOCATION:-classpath:keystore.jks}
     - ENCRYPT_KEYSTORE_PASSWORD=${ENCRYPT_KEYSTORE_PASSWORD:-store_pass} # store password
     - ENCRYPT_KEYSTORE_SECRET=${ENCRYPT_KEYSTORE_SECRET:-key_pass} # key password
-    - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:-http://user:user_pass@local-eureka:8761/eureka/}
-    - EUREKA_INSTANCE_HOSTNAME=${EUREKA_INSTANCE_HOSTNAME:-local-configserver}
+    - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:-http://user:user_pass@eureka.local:8761/eureka/}
+    - EUREKA_INSTANCE_HOSTNAME=${EUREKA_INSTANCE_HOSTNAME:-configserver.local}
     - EUREKA_INSTANCE_NONSECUREPORT=${EUREKA_INSTANCE_NONSECUREPORT:-8888}
     - GIT_HOST=${GIT_HOST:-gitlab.internal}
     - GIT_PREFIX=${GIT_PREFIX:-git@gitlab.internal:configserver}
     - SECURITY_USER_PASSWORD=${SECURITY_USER_PASSWORD:-admin_pass}
-    - SPRING_APPLICATION_NAME=${SPRING_APPLICATION_NAME:-local-configserver}
+    - SPRING_APPLICATION_NAME=${SPRING_APPLICATION_NAME:-configserver.local}
     - SERVER_PORT=${SERVER_PORT:-8888}
     - SPRING_CLOUD_CONFIG_SERVER_COMMONCONFIG_APPLICATION=${SPRING_CLOUD_CONFIG_SERVER_COMMONCONFIG_APPLICATION:-common}
     - SPRING_CLOUD_CONFIG_SERVER_COMMONCONFIG_LABEL=${SPRING_CLOUD_CONFIG_SERVER_COMMONCONFIG_LABEL:-develop}
@@ -46,14 +46,14 @@ services:
     - SPRING_CLOUD_CONFIG_SERVER_MONITOR_GITLAB_ENABLED=${SPRING_CLOUD_CONFIG_SERVER_MONITOR_GITLAB_ENABLED:-false}
     - SPRING_CLOUD_CONFIG_SERVER_MONITOR_WHITELIST=${SPRING_CLOUD_CONFIG_SERVER_MONITOR_WHITELIST} # changeme
     - SPRING_PROFILES_ACTIVE=${ENV:-development}.env
-    - SPRING_RABBITMQ_HOST=${SPRING_RABBITMQ_HOST:-local-cloudbus} # changeme
+    - SPRING_RABBITMQ_HOST=${SPRING_RABBITMQ_HOST:-cloudbus.local} # changeme
     - SPRING_RABBITMQ_PASSWORD=${SPRING_RABBITMQ_PASSWORD:-user_pass} # changeme
     - SPRING_RABBITMQ_PORT=${SPRING_RABBITMQ_PORT:-5672}
     - SPRING_RABBITMQ_USERNAME=${SPRING_RABBITMQ_USERNAME:-user} # changeme
     external_links:
-    - local-eureka:local-eureka
-    - local-cloudbus:local-cloudbus
-    - local-git:local-git
+    - eureka.local:eureka.local
+    - cloudbus.local:cloudbus.local
+
 
 
 volumes:

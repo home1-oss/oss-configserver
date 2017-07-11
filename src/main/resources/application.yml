@@ -57,7 +57,7 @@ server:
       suffix: .log
 
 spring.cloud:
-  client.hostname: ${SPRING_CLOUD_CLIENT_HOSTNAME:local-configserver}
+  client.hostname: ${SPRING_CLOUD_CLIENT_HOSTNAME:configserver.local}
   config:
     server:
       common-config:
@@ -65,7 +65,7 @@ spring.cloud:
         enabled: true
         git:
           #uri: ${GIT_PREFIX:git@gitlab.internal:configserver}/${spring.cloud.config.server.common-config.application}-config.git
-          uri: ${GIT_PREFIX:git@local-git:configserver}/${spring.cloud.config.server.common-config.application}-config.git
+          uri: ${GIT_PREFIX:git@gitlag.local:configserver}/${spring.cloud.config.server.common-config.application}-config.git
           #searchPaths: src/main/resources
         label: ${SPRING_CLOUD_CONFIG_SERVER_COMMONCONFIG_LABEL:master}
       defaultLabel: ${SPRING_CLOUD_CONFIG_SERVER_DEFAULTLABEL:master}
@@ -73,12 +73,12 @@ spring.cloud:
       deployKey: ${SPRING_CLOUD_CONFIG_SERVER_DEPLOYKEY:classpath:deploy_key} # A custom property
       prefix: /config
       git:
-        #uri: ${GIT_PREFIX:https://local-git:20080/configserver}/all-applications-in-one-repo-config.git # can use wildcard
-        #uri: ${GIT_PREFIX:http://local-git:20080/configserver}/{application}-config.git # can use wildcard # http or https
+        #uri: ${GIT_PREFIX:https://gitlab.local:20080/configserver}/all-applications-in-one-repo-config.git # can use wildcard
+        #uri: ${GIT_PREFIX:http://gitlab.local:20080/configserver}/{application}-config.git # can use wildcard # http or https
         #username: git_username
         #password: git_password
         #uri: ${GIT_PREFIX:git@gitlab.internal:configserver}/{application}-config.git # SSH
-        uri: ${GIT_PREFIX:git@local-git:configserver}/{application}-config.git # SSH
+        uri: ${GIT_PREFIX:git@gitlab.local:configserver}/{application}-config.git # SSH
         #searchPaths: src/main/resources # search locations
         #basedir: /var/configserver # default is /tmp, file lost after restart
         #repos:  # multi repos, match by 'application/profile'
@@ -105,10 +105,10 @@ spring.cloud:
 eureka:
   instance:
     # eureka.instance.hostname affect Status->instances's url href (not text) value on dashboard
-    hostname: ${EUREKA_INSTANCE_HOSTNAME:local-configserver}
+    hostname: ${EUREKA_INSTANCE_HOSTNAME:configserver.local}
     prefer-ip-address: ${EUREKA_INSTANCE_PREFER_IP_ADDRESS:false}
     # eureka.instance.instance-id affect Status->instances's url text (not href) value on dashboard
-    instance-id: ${spring.application.name}:${EUREKA_INSTANCE_HOSTNAME:local-configserver}:${EUREKA_INSTANCE_NONSECUREPORT:${SERVER_PORT:8888}}:${random.value}
+    instance-id: ${spring.application.name}:${EUREKA_INSTANCE_HOSTNAME:configserver.local}:${EUREKA_INSTANCE_NONSECUREPORT:${SERVER_PORT:8888}}:${random.value}
     nonSecurePort: ${EUREKA_INSTANCE_NONSECUREPORT:8888}
     leaseRenewalIntervalInSeconds: 10
     statusPageUrlPath: ${server.context-path:${SERVER_CONTEXTPATH:}}${management.context-path:${MANAGEMENT_CONTEXTPATH:}}${endpoints.info.path:/info}
@@ -118,7 +118,7 @@ eureka:
     #healthCheckUrl: https://${eureka.instance.hostname}${endpoints.health.path:/health}
     #homePageUrl: https://${eureka.instance.hostname}/
     metadataMap:
-      #instance-id: ${spring.application.name}:${EUREKA_INSTANCE_HOSTNAME:local-configserver}:${EUREKA_INSTANCE_NONSECUREPORT:${SERVER_PORT:8888}}:${random.value}
+      #instance-id: ${spring.application.name}:${EUREKA_INSTANCE_HOSTNAME:configserver.local}:${EUREKA_INSTANCE_NONSECUREPORT:${SERVER_PORT:8888}}:${random.value}
       #user: ${security.user.name} # hide admin user
       #password: ${security.user.password} # hide admin password
       configPath: ${spring.cloud.config.server.prefix}
@@ -126,7 +126,7 @@ eureka:
       management.port: ${management.port:${MANAGEMENT_PORT:${server.port:${SERVER_PORT:8080}}}}
   client:
     serviceUrl:
-      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://user:user_pass@local-eureka:8761/eureka/}
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://user:user_pass@eureka.local:8761/eureka/}
 
 spring.data.jpa.repositories.enabled: false # Enable JPA repositories.
 spring.datasource:
@@ -170,7 +170,7 @@ spring.jpa:
 
 spring:
   rabbitmq:
-    host: ${SPRING_RABBITMQ_HOST:local-cloudbus}
+    host: ${SPRING_RABBITMQ_HOST:cloudbus.local}
     port: ${SPRING_RABBITMQ_PORT:5672}
     username: ${SPRING_RABBITMQ_USERNAME:user}
     password: ${SPRING_RABBITMQ_PASSWORD:user_pass}
@@ -213,7 +213,7 @@ spring.datasource:
   schema: classpath:/schema-mysql.sql
   initialize: true
   driver-class-name: com.mysql.jdbc.Driver
-  url: jdbc:mysql://${DB_ADDR:local-mysql}:${DB_PORT:3306}/${DB_NAME:oss-configserver}?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+  url: jdbc:mysql://${DB_ADDR:mysql.local}:${DB_PORT:3306}/${DB_NAME:oss-configserver}?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
   username: ${DB_USER:user}
   password: ${DB_PASS:user_pass}
 
@@ -240,7 +240,7 @@ spring.datasource:
   schema: classpath:/schema-mysql.sql
   initialize: true
   driver-class-name: com.mysql.jdbc.Driver
-  url: jdbc:mysql://${DB_ADDR:local-mysql}:${DB_PORT:3306}/${DB_NAME:oss-configserver}?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+  url: jdbc:mysql://${DB_ADDR:mysql.local}:${DB_PORT:3306}/${DB_NAME:oss-configserver}?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
   username: ${DB_USER:user}
   password: ${DB_PASS:user_pass}
 

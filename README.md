@@ -135,14 +135,14 @@ eureka:
   instance:
     client:
       serviceUrl:
-        defaultZone: http://local-eureka:8761/eureka/  # 使用eureka发现configserver的地址
+        defaultZone: http://eureka.local:8761/eureka/  # 使用eureka发现configserver的地址
 
 spring.cloud:
   config:
     enabled: true
     discovery:
       enabled: true
-      serviceId: local-configserver
+      serviceId: configserver.local
     failFast: true
     name: foo                                       # 应用的名字(配置git repository的名称前缀)
     label: master                                   # 配置git repository的分支

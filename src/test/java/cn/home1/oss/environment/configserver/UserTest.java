@@ -19,15 +19,15 @@ public class UserTest {
   创建用户：
   curl -i -u admin:admin_pass -X POST -H 'Content-Type: application/x-www-form-urlencoded;' \
    -d "password=user_pass" \
-   "http://local-configserver:8888/config/users/configserver-test/"
+   "http://configserver.local:8888/config/users/configserver-test/"
   查询用户：
-  curl -i -u admin:admin_pass -X GET "http://local-configserver:8888/config/users/configserver-test/"
+  curl -i -u admin:admin_pass -X GET "http://configserver.local:8888/config/users/configserver-test/"
   删除用户：
-  curl -i -u admin:admin_pass -X DELETE "http://local-configserver:8888/config/users/configserver-test/"
+  curl -i -u admin:admin_pass -X DELETE "http://configserver.local:8888/config/users/configserver-test/"
   更新用户密码：
   curl -i -u admin:admin_pass -X PUT -H 'Content-Type: application/x-www-form-urlencoded;' \
    -d "password=user_pass_new" \
-   "http://local-configserver:8888/config/users/configserver-test/"
+   "http://configserver.local:8888/config/users/configserver-test/"
   */
 
 
