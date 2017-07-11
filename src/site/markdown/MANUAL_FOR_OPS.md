@@ -67,7 +67,7 @@
     # see: http://stackoverflow.com/questions/13322485/how-to-i-get-the-primary-ip-address-of-the-local-machine-on-linux-and-os-x
 
     export GIT_HOST=gitlab.internal
-    export SPRING_CLOUD_CONFIG_SERVER_DEPLOYKEY="classpath:deploy_key"
+    export SPRING_CLOUD_CONFIG_SERVER_DEPLOYKEY="classpath:default_deploy_key"
     export SPRING_CLOUD_CONFIG_SERVER_MONITOR_WHITELIST="${GIT_HOST},$(dig +short ${GIT_HOST})"
     
     export EUREKA_CLIENT_SERVICEURL_DEFAULTZONE="http://user:user_pass@oss-eureka-peer1.internal:8761/eureka/,http://user:user_pass@oss-eureka-peer2.internal:8761/eureka/,http://user:user_pass@oss-eureka-peer3.internal:8761/eureka/"
@@ -120,7 +120,7 @@
 
 ## Build-in deploy key for non-production environments
 
-    ssh-keygen -t rsa -b 2048 -f src/main/resources/deploy_key -q -N "" -C "configserver@home1.cn"
+    ssh-keygen -t rsa -b 2048 -f src/main/resources/default_deploy_key -q -N "" -C "configserver@home1.cn"
 
 ## Cipher and keystore
 

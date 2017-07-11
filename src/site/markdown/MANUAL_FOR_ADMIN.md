@@ -26,9 +26,9 @@
 
     SECURITY_USER_PASSWORD="admin_pass";
     
-    curl -i -u admin:${SECURITY_USER_PASSWORD} -X POST "http://local-configserver:8888/config/decrypt" -d '{cipher}AQAcBZjNSNIT4dFJR0mzqzVOVY2OsKim3UQyei7TXZ+VCaBVHKEX2ztFwAMaZr7LABZYAkJG/3+tfnrQoA4NsQGH0YybIMui55cyQCbMtaItRlzy9uegnRwJ5w4XOqJVdglthpqNldeKt2dxXj/C1UnHijvNWjZ+BnDc7b9mTgt4pi7dLHfaLD3tuddvRDrYiaR4oNDFn7qkEz52Jk3ooYhomr+O5QH6VTqQcVqmOJF54XPiFCFoMho9m115BHaLvqL02g26hirFuDd2+JqFXo6mxFpRHZeOKeqUKQFdIDYQarmiLp21RL4lYpao2ePtA4CKqDOwntC4zXtKHmA8NOosxtxRUAZ1Sdp9CPjur5Ws/A7+uSUC6TwLqCRGxTLq8dY='
+    curl -i -u admin:${SECURITY_USER_PASSWORD} -X POST "http://configserver.local:8888/config/decrypt" -d '{cipher}AQAcBZjNSNIT4dFJR0mzqzVOVY2OsKim3UQyei7TXZ+VCaBVHKEX2ztFwAMaZr7LABZYAkJG/3+tfnrQoA4NsQGH0YybIMui55cyQCbMtaItRlzy9uegnRwJ5w4XOqJVdglthpqNldeKt2dxXj/C1UnHijvNWjZ+BnDc7b9mTgt4pi7dLHfaLD3tuddvRDrYiaR4oNDFn7qkEz52Jk3ooYhomr+O5QH6VTqQcVqmOJF54XPiFCFoMho9m115BHaLvqL02g26hirFuDd2+JqFXo6mxFpRHZeOKeqUKQFdIDYQarmiLp21RL4lYpao2ePtA4CKqDOwntC4zXtKHmA8NOosxtxRUAZ1Sdp9CPjur5Ws/A7+uSUC6TwLqCRGxTLq8dY='
     # or
-    curl -i -u admin:${SECURITY_USER_PASSWORD} -X POST "http://local-configserver:8888/config/decrypt" -d 'AQAcBZjNSNIT4dFJR0mzqzVOVY2OsKim3UQyei7TXZ+VCaBVHKEX2ztFwAMaZr7LABZYAkJG/3+tfnrQoA4NsQGH0YybIMui55cyQCbMtaItRlzy9uegnRwJ5w4XOqJVdglthpqNldeKt2dxXj/C1UnHijvNWjZ+BnDc7b9mTgt4pi7dLHfaLD3tuddvRDrYiaR4oNDFn7qkEz52Jk3ooYhomr+O5QH6VTqQcVqmOJF54XPiFCFoMho9m115BHaLvqL02g26hirFuDd2+JqFXo6mxFpRHZeOKeqUKQFdIDYQarmiLp21RL4lYpao2ePtA4CKqDOwntC4zXtKHmA8NOosxtxRUAZ1Sdp9CPjur5Ws/A7+uSUC6TwLqCRGxTLq8dY='
+    curl -i -u admin:${SECURITY_USER_PASSWORD} -X POST "http://configserver.local:8888/config/decrypt" -d 'AQAcBZjNSNIT4dFJR0mzqzVOVY2OsKim3UQyei7TXZ+VCaBVHKEX2ztFwAMaZr7LABZYAkJG/3+tfnrQoA4NsQGH0YybIMui55cyQCbMtaItRlzy9uegnRwJ5w4XOqJVdglthpqNldeKt2dxXj/C1UnHijvNWjZ+BnDc7b9mTgt4pi7dLHfaLD3tuddvRDrYiaR4oNDFn7qkEz52Jk3ooYhomr+O5QH6VTqQcVqmOJF54XPiFCFoMho9m115BHaLvqL02g26hirFuDd2+JqFXo6mxFpRHZeOKeqUKQFdIDYQarmiLp21RL4lYpao2ePtA4CKqDOwntC4zXtKHmA8NOosxtxRUAZ1Sdp9CPjur5Ws/A7+uSUC6TwLqCRGxTLq8dY='
     
   Got 'mysecret'
 
@@ -49,20 +49,20 @@
     APP_PASS="user_pass";
     
     curl -i -u admin:${SECURITY_USER_PASSWORD} -X POST -H 'Content-Type: application/x-www-form-urlencoded;' \
-        -d "password=${APP_PASS}" "http://local-configserver:8888/config/users/${APP_NAME}/"
+        -d "password=${APP_PASS}" "http://configserver.local:8888/config/users/${APP_NAME}/"
 
 #### Delete user
 
-    curl -i -u admin:${SECURITY_USER_PASSWORD} -X DELETE "http://local-configserver:8888/config/users/${APP_NAME}/"
+    curl -i -u admin:${SECURITY_USER_PASSWORD} -X DELETE "http://configserver.local:8888/config/users/${APP_NAME}/"
 
 #### Get user
 
-    curl -i -u admin:${SECURITY_USER_PASSWORD} -X GET "http://local-configserver:8888/config/users/${APP_NAME}/"
+    curl -i -u admin:${SECURITY_USER_PASSWORD} -X GET "http://configserver.local:8888/config/users/${APP_NAME}/"
 
 #### Update user's password
 
     curl -i -u admin:${SECURITY_USER_PASSWORD} -X PUT -H 'Content-Type: application/x-www-form-urlencoded;' \
-        -d "password=${APP_PASS}" "http://local-configserver:8888/config/users/${APP_NAME}/"
+        -d "password=${APP_PASS}" "http://configserver.local:8888/config/users/${APP_NAME}/"
 
 
 
@@ -70,9 +70,9 @@
 
 ## Generate a keypair for accessing git repository
 
-    ssh-keygen -t rsa -b 2048 -f src/main/resources/deploy_key -q -N "" -C "configserver@home1.cn"
+    ssh-keygen -t rsa -b 2048 -f src/main/resources/default_deploy_key -q -N "" -C "configserver@home1.cn"
 
-  Use src/main/resources/deploy_key.pub as deploy key in config projects.
+  Use src/main/resources/default_deploy_key.pub as deploy key in config projects.
   Default one is 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDJexpGshox4d2mRhYIjOjxlAmcF9k9fKzlr2ylKS32LwMrVeKY+XyV06YvX0FE0uwj3DSp2Vai2e8kEylRDhQmuV1ZjjA08P9/j9SacFuzY8TfncdUwsQ3wxmBjmlpQoODUad7v0ld0r1AfttqbfGJr8L5gPzxvoA96K+6PkYyzUwbStJiW0ruNEVOb5LgN/v90LWMorwXj2Y/fu+i5OWp+iCTrQ6ltC6xQ/f3MyRMbfUxW3cXNp9UkdVkFDJ4Le/5poim5yPi6d2vjG8z7h5hM7M+H7q72hVoH9Rx0yzp55jOSRMXDGU138pK6HQFU/mCw9yaT0OwGK5IdvaX+ryd configserver@home1.cn'
 
 ## Run git service or use public git service
@@ -99,7 +99,7 @@
 TODO fixme
 
     SECURITY_USER_PASSWORD="admin_pass";
-    DB_ADDR="local-mysql";
+    DB_ADDR="mysql.local";
     DB_PORT="3306";
     DB_USER="configserver";
     DB_PASS="configserver";

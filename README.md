@@ -135,14 +135,14 @@ eureka:
   instance:
     client:
       serviceUrl:
-        defaultZone: http://local-eureka:8761/eureka/  # 使用eureka发现configserver的地址
+        defaultZone: http://eureka.local:8761/eureka/  # 使用eureka发现configserver的地址
 
 spring.cloud:
   config:
     enabled: true
     discovery:
       enabled: true
-      serviceId: local-configserver
+      serviceId: configserver.local
     failFast: true
     name: foo                                       # 应用的名字(配置git repository的名称前缀)
     label: master                                   # 配置git repository的分支
@@ -168,7 +168,7 @@ spring.cloud:
 应用名称(spring.application.name)为: foo  
 那么配置git仓库就是: http://gitlab.internal/groups/configserver/foo-config
 
-clone 配置git仓库 `git clone git@gitlab.internal:configserver/foo-config.git`  
+clone 配置git仓库 `git clone git@gitlab.internal:home1-oss/foo-config.git`  
 创建application.yml
 ```
 # foo-config

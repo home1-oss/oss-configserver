@@ -1,7 +1,7 @@
 
 spring:
   application:
-    name: ${SPRING_APPLICATION_NAME:local-configserver}
+    name: ${SPRING_APPLICATION_NAME:configserver.local}
   cloud:
     config:
       enabled: false
