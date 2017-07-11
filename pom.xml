@@ -15,7 +15,7 @@
     <name>oss-configserver</name>
     <packaging>jar</packaging>
     <url>https://github.com/home1-oss/oss-configserver</url>
-    <version>1.0.7.OSS</version>
+    <version>1.0.8.OSS-SNAPSHOT</version>
 
     <ciManagement>
         <system>Travis CI</system>
