@@ -7,7 +7,7 @@ app:
 logging.level.: ${LOGGING_LEVEL_:INFO}
 logging:
   file: ${LOGGING_FILE:oss-configserver}.log
-  path: ${LOGGING_PATH:${user.home}/data/oss-configserver/logs}
+  path: ${LOGGING_PATH:${user.home}/.oss/oss-configserver/logs}
   level:
     jndi: ${LOGGING_LEVEL_:INFO}
     com.zaxxer.hikari.pool: ${LOGGING_LEVEL_:INFO}
