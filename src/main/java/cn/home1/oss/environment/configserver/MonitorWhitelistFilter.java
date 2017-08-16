@@ -16,6 +16,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -41,8 +42,9 @@ public class MonitorWhitelistFilter extends GenericFilterBean {
 
   @Setter
   private String monitorEndpoint;
-  @Setter
-  private String webhookPassword;
+
+  @Autowired
+  private Security security;
 
   private Set<String> monitorWhitelist = newHashSet();
 
@@ -92,7 +94,7 @@ public class MonitorWhitelistFilter extends GenericFilterBean {
 
       if (inWhiteList && realIpInWhiteList) {
         log.info("remoteAddr: {}, remoteHost: {}, realIp: {} in whitelist.", remoteAddr, remoteHost, realIp);
-        final String headerValue = basicAuthHeader(Security.USER_WEBHOOK, this.webhookPassword);
+        final String headerValue = basicAuthHeader(security.getWebHookUserName(), security.getWebHookUserPassword());
         chain.doFilter(new AuthorizationHeaderWrapper(request, headerValue), response);
       } else {
         log.info("remoteAddr: {}, remoteHost: {} realIp: {} not in whitelist.", remoteAddr, remoteHost, realIp);

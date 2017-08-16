@@ -25,6 +25,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.File;
 import java.io.InputStream;
@@ -40,8 +41,9 @@ public class ConfigServer {
   private Environment environment;
 
   @RequestMapping(path = "/")
+  @ResponseBody
   public String index() {
-    return "redirect:/index.html";
+    return "welcome to home1-oss config server! visit https://github.com/home1-oss/oss-configserver for more info.";
   }
 
   public static void main(final String... args) {
