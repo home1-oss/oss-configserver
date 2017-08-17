@@ -101,8 +101,8 @@ TODO fixme
     SECURITY_USER_PASSWORD="admin_pass";
     DB_ADDR="mysql.local";
     DB_PORT="3306";
-    DB_USER="configserver";
-    DB_PASS="configserver";
+    DB_USER="user";
+    DB_PASS="user_pass";
     ENCRYPT_KEYSTORE_SECRET="key_pass";
     ENCRYPT_KEYSTORE_PASSWORD="store_pass";
     GIT_PREFIX="http://gitlab.internal/configserver";

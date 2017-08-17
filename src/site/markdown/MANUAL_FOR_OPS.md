@@ -102,7 +102,7 @@
     export MYSQL_ROOT_PASSWORD="$(echo `</dev/urandom tr -dc A-Za-z0-9 | head -c16`)"
     # assume db on same host
     export DB_ADDR="$(ip route get 1 | awk '{print $NF;exit}')"
-    export DB_USER="configserver"
+    export DB_USER="user"
     export DB_PASS="$(echo `</dev/urandom tr -dc A-Za-z0-9 | head -c16`)"
     echo "SAVE_THIS MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}"
     echo "SAVE_THIS DB_PASS: ${DB_PASS}"

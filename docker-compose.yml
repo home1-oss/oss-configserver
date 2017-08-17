@@ -18,11 +18,11 @@ services:
 #    - ${SPRING_CLOUD_CONFIG_SERVER_DEPLOYKEY_PATH}/production-keystore.jks:/root/production-keystore.jks
     environment:
     - APP_ADMINPUBLICKEY=${APP_ADMINPUBLICKEY:-RSA1024_PUB_X509:MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC/gmBcdQZxiQmhQrP1awAZuuOl4snl7cEV8n65osVO7CdqxXG5mUYNVr6siwuTm/SsmBV+86JISlzvMK/Bxwsmf/ApZicgItChmDuU9TCaZIksqnpbtONnCm/sHWwa/2hqPTjdc0LC+jQ/FCU2b9vpbSId0Wg28/gtoGaLWbsm/QIDAQAB}
-    - DB_ADDR=${DB_ADDR:-~/data/oss-configserver/h2}
+    - DB_ADDR=${DB_ADDR:-~/.oss/oss-configserver/h2}
     - DB_NAME=${DB_NAME:-oss-configserver}
     #- DB_PORT=${DB_PORT:-3306}
-    #- DB_PASS=${DB_PASS:-root_password}
-    - DB_USER=${DB_USER:-root}
+    #- DB_PASS=${DB_PASS:-user_pass}
+    - DB_USER=${DB_USER:-user}
     - ENCRYPT_KEYSTORE_ALIAS=${ENCRYPT_KEYSTORE_ALIAS:-key_alias}
     - ENCRYPT_KEYSTORE_LOCATION=${ENCRYPT_KEYSTORE_LOCATION:-classpath:keystore.jks}
     - ENCRYPT_KEYSTORE_PASSWORD=${ENCRYPT_KEYSTORE_PASSWORD:-store_pass} # store password
