@@ -53,7 +53,15 @@ public class GitFileConfigUserDetailsService implements UserDetailsService {
     }
 
     // get environment without profile
-    final Environment environment = environmentController.defaultLabel(username, PROFILE_NOT_EXIST);
+    final Environment environment;
+
+    try {
+      environment = environmentController.defaultLabel(username, PROFILE_NOT_EXIST);
+    } catch (Exception exception) {
+      log.error("exception occured when loadUserByUsername from git configuration file, app name:{} ", username,
+          exception);
+      throw exception;
+    }
 
     if (environment == null) {
       throw new UsernameNotFoundException("can not find the project with the name:" + username);
