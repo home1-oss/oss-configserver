@@ -32,6 +32,8 @@
     </scm>
 
     <properties>
+        <sonar.java.binaries>${project.build.directory}/classes</sonar.java.binaries>
+
         <dnsjava.version>2.1.7</dnsjava.version>
         <spring-boot.version>1.4.1.RELEASE</spring-boot.version>
         <oss-release.version>1.0.6.OSS</oss-release.version>
