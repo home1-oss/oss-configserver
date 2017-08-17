@@ -67,7 +67,7 @@ public class ConfigServer {
       final String fileName = StringUtils.replaceOnce(deployKey, "classpath:", "");
       final InputStream initialStream = ConfigServer.class.getClassLoader().getResourceAsStream(fileName);
       final String userHome = System.getProperty("user.home");
-      final String dataDir = userHome + "/data/configserver";
+      final String dataDir = userHome + "/.oss/oss-configserver";
       FileUtils.forceMkdir(new File(dataDir));
       final File targetFile = new File(dataDir + "/default_deploy_key");
       if (! targetFile.exists() || ! targetFile.canRead()) {

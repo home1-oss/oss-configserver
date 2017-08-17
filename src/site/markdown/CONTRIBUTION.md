@@ -12,7 +12,7 @@
         -e GIT_HOST=gitlab.local \
         --network oss-network \
         --link gitlab.local:gitlab.local \
-        -v /root/data/configserver \
+        -v /root/.oss/oss-configserver \
         -v ${HOME}/ws/architecture/common-config:/root/workspace/common-config \
         -v ${HOME}/ws/architecture/oss-todomvc-app-config:/root/workspace/oss-todomvc-app-config \
         -v ${HOME}/ws/architecture/oss-todomvc-thymeleaf-config:/root/workspace/oss-todomvc-thymeleaf-config \

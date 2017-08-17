@@ -2,7 +2,7 @@
 FROM home1oss/java:oracle-8u131-jdk-alpine
 
 VOLUME /tmp
-VOLUME ["/root/data"]
+VOLUME ["/root/.oss"]
 
 #ADD schema-mysql.sql /root/
 ADD entrypoint.sh /root/

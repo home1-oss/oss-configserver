@@ -145,7 +145,7 @@ spring.datasource:
   validation-query: 'SELECT 1'
   type: 'com.zaxxer.hikari.HikariDataSource'
   driver-class-name: 'org.h2.Driver'
-  url: jdbc:h2:${DB_ADDR:~/data/oss-configserver/h2}
+  url: jdbc:h2:${DB_ADDR:~/.oss/oss-configserver/h2}
   #url: jdbc:h2:${DB_ADDR:mem}:${DB_NAME:oss-configserver}
   username: ${DB_PASS:sa}
   #password: ${DB_PASS:}
