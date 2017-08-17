@@ -66,15 +66,18 @@ public class ConfigServer {
       // see: http://www.baeldung.com/convert-input-stream-to-a-file
       final String fileName = StringUtils.replaceOnce(deployKey, "classpath:", "");
       final InputStream initialStream = ConfigServer.class.getClassLoader().getResourceAsStream(fileName);
+      if (initialStream == null) {
+        throw new IllegalArgumentException("deployKey '" + deployKey + "' not found in classpath ('" + fileName + "')");
+      }
       final String userHome = System.getProperty("user.home");
       final String dataDir = userHome + "/.oss/oss-configserver";
       FileUtils.forceMkdir(new File(dataDir));
       final File targetFile = new File(dataDir + "/default_deploy_key");
+      FileUtils.copyInputStreamToFile(initialStream, targetFile);
       if (! targetFile.exists() || ! targetFile.canRead()) {
         throw new IllegalArgumentException("Invalid deployKey '" + //
             deployKey + "', targetFile '" + targetFile.getPath() + "' not found or not readable");
       }
-      FileUtils.copyInputStreamToFile(initialStream, targetFile);
       deployKeyPath = targetFile.getPath();
     } else if (deployKey.startsWith("file:")) {
       deployKeyPath = StringUtils.replaceOnce(deployKey, "file:", "");
