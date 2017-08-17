@@ -58,14 +58,6 @@ spring.cloud:
   client.hostname: ${SPRING_CLOUD_CLIENT_HOSTNAME:configserver.local}
   config:
     server:
-      common-config:
-        application: ${SPRING_CLOUD_CONFIG_SERVER_COMMONCONFIG_APPLICATION:common}
-        enabled: true
-        git:
-          #uri: ${GIT_PREFIX:git@gitlab.internal:home1-oss}/${spring.cloud.config.server.common-config.application}-config.git
-          uri: ${GIT_PREFIX:ssh://git@gitlab.local:20022/home1_oss}/${spring.cloud.config.server.common-config.application}-config.git
-          #searchPaths: src/main/resources
-        label: ${SPRING_CLOUD_CONFIG_SERVER_COMMONCONFIG_LABEL:master}
       defaultLabel: ${SPRING_CLOUD_CONFIG_SERVER_DEFAULTLABEL:master}
       defaultProfile: ${SPRING_CLOUD_CONFIG_SERVER_DEFAULTPROFILE:default}
       deployKey: ${SPRING_CLOUD_CONFIG_SERVER_DEPLOYKEY:classpath:default_deploy_key} # A custom property

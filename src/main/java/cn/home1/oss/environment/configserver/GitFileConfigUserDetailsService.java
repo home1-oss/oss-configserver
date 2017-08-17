@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.config.environment.Environment;
-import org.springframework.cloud.config.environment.PropertySource;
 import org.springframework.cloud.config.server.environment.EnvironmentController;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,8 +16,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -61,38 +58,14 @@ public class GitFileConfigUserDetailsService implements UserDetailsService {
     if (environment == null) {
       throw new UsernameNotFoundException("can not find the project with the name:" + username);
     }
-    String password = getPasswordFromEnvironment(environment);
-    GrantedAuthority authority = new SimpleGrantedAuthority(Role.USER.toString());
-    return new User(username, password, Arrays.asList(authority));
-
-  }
-
-  private String getPasswordFromEnvironment(Environment environment) {
-    List<PropertySource> propertySources = environment.getPropertySources();
-    if (propertySources == null) {
+    String password = CloudEnvironmentUtil.getByKey(environment, gitFileConfigPasswordKey);
+    if (password == null) {
       throw new BadCredentialsException(
           "can not find the password (spring.cloud.config.password) from environment:" + environment.getName());
     }
-    for (PropertySource propertySource : propertySources) {
-      String password = getPasswordFromPropertySource(propertySource);
-      if (password != null) {
-        return password;
-      }
-    }
-    throw new BadCredentialsException(
-        "can not find the password (spring.cloud.config.password) from environment:" + environment.getName());
-  }
+    GrantedAuthority authority = new SimpleGrantedAuthority(Role.USER.toString());
+    return new User(username, password, Arrays.asList(authority));
 
-  private String getPasswordFromPropertySource(PropertySource propertySource) {
-    Map<?, ?> source = propertySource.getSource();
-    if (source == null) {
-      return null;
-    }
-    Object password = source.get(gitFileConfigPasswordKey);
-    if (password != null && String.class.isAssignableFrom(password.getClass())) {
-      return (String) password;
-    }
-    return null;
   }
 
 }
