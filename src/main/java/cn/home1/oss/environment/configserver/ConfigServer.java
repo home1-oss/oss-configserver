@@ -70,6 +70,10 @@ public class ConfigServer {
       final String dataDir = userHome + "/data/configserver";
       FileUtils.forceMkdir(new File(dataDir));
       final File targetFile = new File(dataDir + "/default_deploy_key");
+      if (! targetFile.exists() || ! targetFile.canRead()) {
+        throw new IllegalArgumentException("Invalid deployKey '" + //
+            deployKey + "', targetFile '" + targetFile.getPath() + "' not found or not readable");
+      }
       FileUtils.copyInputStreamToFile(initialStream, targetFile);
       deployKeyPath = targetFile.getPath();
     } else if (deployKey.startsWith("file:")) {
