@@ -27,7 +27,7 @@ services:
     - ENCRYPT_KEYSTORE_LOCATION=${ENCRYPT_KEYSTORE_LOCATION:-classpath:keystore.jks}
     - ENCRYPT_KEYSTORE_PASSWORD=${ENCRYPT_KEYSTORE_PASSWORD:-store_pass} # store password
     - ENCRYPT_KEYSTORE_SECRET=${ENCRYPT_KEYSTORE_SECRET:-key_pass} # key password
-    - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:-http://user:user_pass@eureka.local:8761/eureka/}
+    - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:-http://user:user_pass@oss-eureka.local:8761/eureka/}
     - EUREKA_INSTANCE_HOSTNAME=${EUREKA_INSTANCE_HOSTNAME:-oss-configserver.local}
     - EUREKA_INSTANCE_NONSECUREPORT=${EUREKA_INSTANCE_NONSECUREPORT:-8888}
     - GIT_HOST=${GIT_HOST:-gitlab.internal}
@@ -52,7 +52,7 @@ services:
     - SPRING_RABBITMQ_PORT=${SPRING_RABBITMQ_PORT:-5672}
     - SPRING_RABBITMQ_USERNAME=${SPRING_RABBITMQ_USERNAME:-user} # changeme
     external_links:
-    - eureka.local:eureka.local
+    - oss-eureka.local:oss-eureka.local
     - cloudbus.local:cloudbus.local
 
 

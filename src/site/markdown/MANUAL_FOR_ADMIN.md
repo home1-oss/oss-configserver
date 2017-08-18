@@ -26,9 +26,9 @@
 
     SECURITY_USER_PASSWORD="admin_pass";
     
-    curl -i -u admin:${SECURITY_USER_PASSWORD} -X POST "http://configserver.local:8888/config/decrypt" -d '{cipher}AQAcBZjNSNIT4dFJR0mzqzVOVY2OsKim3UQyei7TXZ+VCaBVHKEX2ztFwAMaZr7LABZYAkJG/3+tfnrQoA4NsQGH0YybIMui55cyQCbMtaItRlzy9uegnRwJ5w4XOqJVdglthpqNldeKt2dxXj/C1UnHijvNWjZ+BnDc7b9mTgt4pi7dLHfaLD3tuddvRDrYiaR4oNDFn7qkEz52Jk3ooYhomr+O5QH6VTqQcVqmOJF54XPiFCFoMho9m115BHaLvqL02g26hirFuDd2+JqFXo6mxFpRHZeOKeqUKQFdIDYQarmiLp21RL4lYpao2ePtA4CKqDOwntC4zXtKHmA8NOosxtxRUAZ1Sdp9CPjur5Ws/A7+uSUC6TwLqCRGxTLq8dY='
+    curl -i -u admin:${SECURITY_USER_PASSWORD} -X POST "http://oss-configserver.local:8888/config/decrypt" -d '{cipher}AQAcBZjNSNIT4dFJR0mzqzVOVY2OsKim3UQyei7TXZ+VCaBVHKEX2ztFwAMaZr7LABZYAkJG/3+tfnrQoA4NsQGH0YybIMui55cyQCbMtaItRlzy9uegnRwJ5w4XOqJVdglthpqNldeKt2dxXj/C1UnHijvNWjZ+BnDc7b9mTgt4pi7dLHfaLD3tuddvRDrYiaR4oNDFn7qkEz52Jk3ooYhomr+O5QH6VTqQcVqmOJF54XPiFCFoMho9m115BHaLvqL02g26hirFuDd2+JqFXo6mxFpRHZeOKeqUKQFdIDYQarmiLp21RL4lYpao2ePtA4CKqDOwntC4zXtKHmA8NOosxtxRUAZ1Sdp9CPjur5Ws/A7+uSUC6TwLqCRGxTLq8dY='
     # or
-    curl -i -u admin:${SECURITY_USER_PASSWORD} -X POST "http://configserver.local:8888/config/decrypt" -d 'AQAcBZjNSNIT4dFJR0mzqzVOVY2OsKim3UQyei7TXZ+VCaBVHKEX2ztFwAMaZr7LABZYAkJG/3+tfnrQoA4NsQGH0YybIMui55cyQCbMtaItRlzy9uegnRwJ5w4XOqJVdglthpqNldeKt2dxXj/C1UnHijvNWjZ+BnDc7b9mTgt4pi7dLHfaLD3tuddvRDrYiaR4oNDFn7qkEz52Jk3ooYhomr+O5QH6VTqQcVqmOJF54XPiFCFoMho9m115BHaLvqL02g26hirFuDd2+JqFXo6mxFpRHZeOKeqUKQFdIDYQarmiLp21RL4lYpao2ePtA4CKqDOwntC4zXtKHmA8NOosxtxRUAZ1Sdp9CPjur5Ws/A7+uSUC6TwLqCRGxTLq8dY='
+    curl -i -u admin:${SECURITY_USER_PASSWORD} -X POST "http://oss-configserver.local:8888/config/decrypt" -d 'AQAcBZjNSNIT4dFJR0mzqzVOVY2OsKim3UQyei7TXZ+VCaBVHKEX2ztFwAMaZr7LABZYAkJG/3+tfnrQoA4NsQGH0YybIMui55cyQCbMtaItRlzy9uegnRwJ5w4XOqJVdglthpqNldeKt2dxXj/C1UnHijvNWjZ+BnDc7b9mTgt4pi7dLHfaLD3tuddvRDrYiaR4oNDFn7qkEz52Jk3ooYhomr+O5QH6VTqQcVqmOJF54XPiFCFoMho9m115BHaLvqL02g26hirFuDd2+JqFXo6mxFpRHZeOKeqUKQFdIDYQarmiLp21RL4lYpao2ePtA4CKqDOwntC4zXtKHmA8NOosxtxRUAZ1Sdp9CPjur5Ws/A7+uSUC6TwLqCRGxTLq8dY='
     
   Got 'mysecret'
 
@@ -49,20 +49,20 @@
     APP_PASS="user_pass";
     
     curl -i -u admin:${SECURITY_USER_PASSWORD} -X POST -H 'Content-Type: application/x-www-form-urlencoded;' \
-        -d "password=${APP_PASS}" "http://configserver.local:8888/config/users/${APP_NAME}/"
+        -d "password=${APP_PASS}" "http://oss-configserver.local:8888/config/users/${APP_NAME}/"
 
 #### Delete user
 
-    curl -i -u admin:${SECURITY_USER_PASSWORD} -X DELETE "http://configserver.local:8888/config/users/${APP_NAME}/"
+    curl -i -u admin:${SECURITY_USER_PASSWORD} -X DELETE "http://oss-configserver.local:8888/config/users/${APP_NAME}/"
 
 #### Get user
 
-    curl -i -u admin:${SECURITY_USER_PASSWORD} -X GET "http://configserver.local:8888/config/users/${APP_NAME}/"
+    curl -i -u admin:${SECURITY_USER_PASSWORD} -X GET "http://oss-configserver.local:8888/config/users/${APP_NAME}/"
 
 #### Update user's password
 
     curl -i -u admin:${SECURITY_USER_PASSWORD} -X PUT -H 'Content-Type: application/x-www-form-urlencoded;' \
-        -d "password=${APP_PASS}" "http://configserver.local:8888/config/users/${APP_NAME}/"
+        -d "password=${APP_PASS}" "http://oss-configserver.local:8888/config/users/${APP_NAME}/"
 
 
 

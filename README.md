@@ -135,14 +135,14 @@ eureka:
   instance:
     client:
       serviceUrl:
-        defaultZone: http://eureka.local:8761/eureka/  # 使用eureka发现configserver的地址
+        defaultZone: http://oss-eureka.local:8761/eureka/  # 使用eureka发现configserver的地址
 
 spring.cloud:
   config:
     enabled: true
     discovery:
       enabled: true
-      serviceId: configserver.local
+      serviceId: oss-configserver.local
     failFast: true
     name: foo                                       # 应用的名字(配置git repository的名称前缀)
     label: master                                   # 配置git repository的分支
@@ -195,9 +195,9 @@ test.property: development.env
 
 此时访问configserver应该可以看到配置信息.  
 例如: 在浏览器里打开  
-http://${configserver-host}:8888/config/foo/default/master  
+http://${oss-configserver-host}:8888/config/foo/default/master  
 或  
-http://${configserver-host}:8888/config/foo/development.env/master  
+http://${oss-configserver-host}:8888/config/foo/development.env/master  
 可以看到类似下图的信息.  
 ![](src/readme/foo_test.png)  
 可以对比观察一下不同环境下配置信息的差异.
