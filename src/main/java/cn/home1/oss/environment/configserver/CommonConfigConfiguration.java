@@ -1,6 +1,7 @@
 package cn.home1.oss.environment.configserver;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.config.server.config.ConfigServerHealthIndicator;
@@ -27,6 +28,9 @@ public class CommonConfigConfiguration {
 
     @Autowired
     private ConfigurableEnvironment environment;
+    
+    @Value("${spring.cloud.config.server.jgit.timeout:10}")
+    private Integer timeout;
 
     @Bean
     @ConditionalOnMissingBean(EnvironmentRepository.class)
@@ -34,6 +38,10 @@ public class CommonConfigConfiguration {
 
       final CommonConfigSupportedMultipleJGitEnvironmentRepository repository =
           new CommonConfigSupportedMultipleJGitEnvironmentRepository(this.environment);
+      
+      if (timeout != null) {
+        repository.setTimeout(timeout);
+      }
 
       return repository;
     }
