@@ -6,14 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 
 @Order(ACCESS_OVERRIDE_ORDER)
@@ -37,9 +35,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
   private String monitorWhitelist;
 
   @Autowired
-  private Environment environment;
-
-  @Autowired
   private GitFileConfigUserDetailsService gitFileConfigUserDetailsService;
 
   @Override
@@ -56,10 +51,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
   protected void configure(final HttpSecurity http) throws Exception {
     http //
         .csrf().disable() //
-        .addFilterBefore(this.monitorWhitelistFilter(), BasicAuthenticationFilter.class) //
         .authorizeRequests() //
         .antMatchers("/").permitAll()//
-        .antMatchers(this.configServerPrefix + "/encrypt", this.configServerPrefix + this.monitorEndpoint).permitAll()
+        .antMatchers(this.configServerPrefix + "/encrypt", this.monitorEndpoint).permitAll()
         .antMatchers(this.configServerPrefix + "/decrypt").hasRole(Role.ADMIN.toString()) //
         .antMatchers(new String[] { //
             this.configServerPrefix + "/{name}/{profiles:.*[^-].*}", //
@@ -78,14 +72,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         .anyRequest().denyAll() //
         .and() //
         .httpBasic();
-  }
-
-  public MonitorWhitelistFilter monitorWhitelistFilter() {
-    final MonitorWhitelistFilter filter = new MonitorWhitelistFilter();
-    filter.setEnvironment(this.environment);
-    filter.setMonitorEndpoint(this.monitorEndpoint);
-    filter.setMonitorWhitelist(this.monitorWhitelist);
-    return filter;
   }
 
 }

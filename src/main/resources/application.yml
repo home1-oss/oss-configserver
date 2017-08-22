@@ -57,6 +57,7 @@ server:
 spring.cloud:
   client.hostname: ${SPRING_CLOUD_CLIENT_HOSTNAME:configserver.local}
   config:
+    monitor.endpoint.path: ${SPRING_CLOUD_CONFIG_SERVER_MONITOR_ENDPOINT_PATH:/config}
     server:
       defaultLabel: ${SPRING_CLOUD_CONFIG_SERVER_DEFAULTLABEL:master}
       defaultProfile: ${SPRING_CLOUD_CONFIG_SERVER_DEFAULTPROFILE:default}
@@ -85,7 +86,6 @@ spring.cloud:
         github.enabled: ${SPRING_CLOUD_CONFIG_SERVER_MONITOR_GITHUB_ENABLED:false}
         gitlab.enabled: ${SPRING_CLOUD_CONFIG_SERVER_MONITOR_GITLAB_ENABLED:false}
         gitlabpath.enabled: ${SPRING_CLOUD_CONFIG_SERVER_MONITOR_GITLABPATH_ENABLED:true}
-        whitelist: ${SPRING_CLOUD_CONFIG_SERVER_MONITOR_WHITELIST:}
 #      health: # configserver repository health
 #        enabled: true  #default true
 #        repositories:
