@@ -55,7 +55,7 @@ server:
       suffix: .log
 
 spring.cloud:
-  client.hostname: ${SPRING_CLOUD_CLIENT_HOSTNAME:configserver.local}
+  client.hostname: ${SPRING_CLOUD_CLIENT_HOSTNAME:oss-configserver.local}
   config:
     monitor.endpoint.path: ${SPRING_CLOUD_CONFIG_SERVER_MONITOR_ENDPOINT_PATH:/config}
     server:
@@ -65,8 +65,8 @@ spring.cloud:
       prefix: /config
       git:
         uri: ${GIT_PREFIX:ssh://git@gitlab.local:20022/home1_oss}/{application}-config.git # SSH
-        #uri: ${GIT_PREFIX:https://gitlab.local:20080/home1-oss}/all-applications-in-one-repo-config.git # can use wildcard
-        #uri: ${GIT_PREFIX:http://gitlab.local:20080/home1-oss}/{application}-config.git # can use wildcard # http or https
+        #uri: ${GIT_PREFIX:https://gitlab.local:10080/home1-oss}/all-applications-in-one-repo-config.git # can use wildcard
+        #uri: ${GIT_PREFIX:http://gitlab.local:10080/home1-oss}/{application}-config.git # can use wildcard # http or https
         #username: git_username
         #password: git_password
         #uri: ${GIT_PREFIX:git@gitlab.internal:home1-oss}/{application}-config.git # SSH
@@ -91,10 +91,10 @@ spring.cloud:
 eureka:
   instance:
     # eureka.instance.hostname affect Status->instances's url href (not text) value on dashboard
-    hostname: ${EUREKA_INSTANCE_HOSTNAME:configserver.local}
+    hostname: ${EUREKA_INSTANCE_HOSTNAME:oss-configserver.local}
     prefer-ip-address: ${EUREKA_INSTANCE_PREFER_IP_ADDRESS:false}
     # eureka.instance.instance-id affect Status->instances's url text (not href) value on dashboard
-    instance-id: ${spring.application.name}:${EUREKA_INSTANCE_HOSTNAME:configserver.local}:${EUREKA_INSTANCE_NONSECUREPORT:${SERVER_PORT:8888}}:${random.value}
+    instance-id: ${spring.application.name}:${EUREKA_INSTANCE_HOSTNAME:oss-configserver.local}:${EUREKA_INSTANCE_NONSECUREPORT:${SERVER_PORT:8888}}:${random.value}
     nonSecurePort: ${EUREKA_INSTANCE_NONSECUREPORT:8888}
     leaseRenewalIntervalInSeconds: 10
     statusPageUrlPath: ${server.context-path:${SERVER_CONTEXTPATH:}}${management.context-path:${MANAGEMENT_CONTEXTPATH:}}${endpoints.info.path:/info}
@@ -104,7 +104,7 @@ eureka:
     #healthCheckUrl: https://${eureka.instance.hostname}${endpoints.health.path:/health}
     #homePageUrl: https://${eureka.instance.hostname}/
     metadataMap:
-      #instance-id: ${spring.application.name}:${EUREKA_INSTANCE_HOSTNAME:configserver.local}:${EUREKA_INSTANCE_NONSECUREPORT:${SERVER_PORT:8888}}:${random.value}
+      #instance-id: ${spring.application.name}:${EUREKA_INSTANCE_HOSTNAME:oss-configserver.local}:${EUREKA_INSTANCE_NONSECUREPORT:${SERVER_PORT:8888}}:${random.value}
       #user: ${security.user.name} # hide admin user
       #password: ${security.user.password} # hide admin password
       configPath: ${spring.cloud.config.server.prefix}
@@ -112,7 +112,7 @@ eureka:
       management.port: ${management.port:${MANAGEMENT_PORT:${server.port:${SERVER_PORT:8080}}}}
   client:
     serviceUrl:
-      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://user:user_pass@eureka.local:8761/eureka/}
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://user:user_pass@oss-eureka.local:8761/eureka/}
 
 spring:
   rabbitmq:

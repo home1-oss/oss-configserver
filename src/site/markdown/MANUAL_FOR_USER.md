@@ -20,20 +20,20 @@
     APP_NAME="oss-todomvc-thymeleaf";
     APP_PASS="user_pass";
     
-    curl -i -u user:${APP_PASS} -X GET "http://configserver.local:8888/config/${APP_NAME}/development.env"
+    curl -i -u user:${APP_PASS} -X GET "http://oss-configserver.local:8888/config/${APP_NAME}/development.env"
 
 ## Get application config info
 
     APP_NAME="oss-todomvc-thymeleaf";
     APP_PASS="user_pass";
 
-    curl -i -u user:${APP_PASS} -X GET "http://configserver.local:8888/config/${APP_NAME}/development.env"
+    curl -i -u user:${APP_PASS} -X GET "http://oss-configserver.local:8888/config/${APP_NAME}/development.env"
 
 #### Encrypt
 
   Permit all access.
 
-    curl -i -X POST "http://configserver.local:8888/config/encrypt" -d 'mysecret'
+    curl -i -X POST "http://oss-configserver.local:8888/config/encrypt" -d 'mysecret'
     
   Got: 'AQAcBZjNSNIT4dFJR0mzqzVOVY2OsKim3UQyei7TXZ+VCaBVHKEX2ztFwAMaZr7LABZYAkJG/3+tfnrQoA4NsQGH0YybIMui55cyQCbMtaItRlzy9uegnRwJ5w4XOqJVdglthpqNldeKt2dxXj/C1UnHijvNWjZ+BnDc7b9mTgt4pi7dLHfaLD3tuddvRDrYiaR4oNDFn7qkEz52Jk3ooYhomr+O5QH6VTqQcVqmOJF54XPiFCFoMho9m115BHaLvqL02g26hirFuDd2+JqFXo6mxFpRHZeOKeqUKQFdIDYQarmiLp21RL4lYpao2ePtA4CKqDOwntC4zXtKHmA8NOosxtxRUAZ1Sdp9CPjur5Ws/A7+uSUC6TwLqCRGxTLq8dY='
 
@@ -44,11 +44,11 @@
 
   1.加密 /encrypt   post方式          *** configserver密钥必须配置好以后才能用（keystrore或者encrypt.key配置其一）
 
-    $ curl configserver.local:8888/config/encrypt -d mysecret   #加密 mysecret
+    $ curl http://oss-configserver.local:8888/config/encrypt -d mysecret   #加密 mysecret
     682bc583f4641835fa2db009355293665d2647dade3375c0ee201de2a49f7bda  #密文
   2.解密 /decryprt  post方式           *** configserver密钥也必须配置好，正常情况客户端不需解密，读到的配置已经是明文
 
-    $ curl configserver.local:8888/config/decrypt -d 682bc583f4641835fa2db009355293665d2647dade3375c0ee201de2a49f7bda
+    $ curl http://oss-configserver.local:8888/config/decrypt -d 682bc583f4641835fa2db009355293665d2647dade3375c0ee201de2a49f7bda
     mysecret  #解密 返回明文
 
 
@@ -58,7 +58,7 @@ configserver提供对配置敏感信息加密的功能。
 1.访问***configserver***的服务
   Permit all access.
 
-    curl -i -X POST "http://configserver.local:8888/config/encrypt" -d 'mysecret'
+    curl -i -X POST "http://oss-configserver.local:8888/config/encrypt" -d 'mysecret'
     
   Got: 'AQAcBZjNSNIT4dFJR0mzqzVOVY2OsKim3UQyei7TXZ+VCaBVHKEX2ztFwAMaZr7LABZYAkJG/3+tfnrQoA4NsQGH0YybIMui55cyQCbMtaItRlzy9uegnRwJ5w4XOqJVdglthpqNldeKt2dxXj/C1UnHijvNWjZ+BnDc7b9mTgt4pi7dLHfaLD3tuddvRDrYiaR4oNDFn7qkEz52Jk3ooYhomr+O5QH6VTqQcVqmOJF54XPiFCFoMho9m115BHaLvqL02g26hirFuDd2+JqFXo6mxFpRHZeOKeqUKQFdIDYQarmiLp21RL4lYpao2ePtA4CKqDOwntC4zXtKHmA8NOosxtxRUAZ1Sdp9CPjur5Ws/A7+uSUC6TwLqCRGxTLq8dY='
 
@@ -73,9 +73,9 @@ configserver提供对配置敏感信息加密的功能。
 
     SECURITY_USER_PASSWORD="admin_pass";
     
-    curl -i -u admin:${SECURITY_USER_PASSWORD} -X POST "http://configserver.local:8888/config/decrypt" -d '{cipher}AQAcBZjNSNIT4dFJR0mzqzVOVY2OsKim3UQyei7TXZ+VCaBVHKEX2ztFwAMaZr7LABZYAkJG/3+tfnrQoA4NsQGH0YybIMui55cyQCbMtaItRlzy9uegnRwJ5w4XOqJVdglthpqNldeKt2dxXj/C1UnHijvNWjZ+BnDc7b9mTgt4pi7dLHfaLD3tuddvRDrYiaR4oNDFn7qkEz52Jk3ooYhomr+O5QH6VTqQcVqmOJF54XPiFCFoMho9m115BHaLvqL02g26hirFuDd2+JqFXo6mxFpRHZeOKeqUKQFdIDYQarmiLp21RL4lYpao2ePtA4CKqDOwntC4zXtKHmA8NOosxtxRUAZ1Sdp9CPjur5Ws/A7+uSUC6TwLqCRGxTLq8dY='
+    curl -i -u admin:${SECURITY_USER_PASSWORD} -X POST "http://oss-configserver.local:8888/config/decrypt" -d '{cipher}AQAcBZjNSNIT4dFJR0mzqzVOVY2OsKim3UQyei7TXZ+VCaBVHKEX2ztFwAMaZr7LABZYAkJG/3+tfnrQoA4NsQGH0YybIMui55cyQCbMtaItRlzy9uegnRwJ5w4XOqJVdglthpqNldeKt2dxXj/C1UnHijvNWjZ+BnDc7b9mTgt4pi7dLHfaLD3tuddvRDrYiaR4oNDFn7qkEz52Jk3ooYhomr+O5QH6VTqQcVqmOJF54XPiFCFoMho9m115BHaLvqL02g26hirFuDd2+JqFXo6mxFpRHZeOKeqUKQFdIDYQarmiLp21RL4lYpao2ePtA4CKqDOwntC4zXtKHmA8NOosxtxRUAZ1Sdp9CPjur5Ws/A7+uSUC6TwLqCRGxTLq8dY='
     # or
-    curl -i -u admin:${SECURITY_USER_PASSWORD} -X POST "http://configserver.local:8888/config/decrypt" -d 'AQAcBZjNSNIT4dFJR0mzqzVOVY2OsKim3UQyei7TXZ+VCaBVHKEX2ztFwAMaZr7LABZYAkJG/3+tfnrQoA4NsQGH0YybIMui55cyQCbMtaItRlzy9uegnRwJ5w4XOqJVdglthpqNldeKt2dxXj/C1UnHijvNWjZ+BnDc7b9mTgt4pi7dLHfaLD3tuddvRDrYiaR4oNDFn7qkEz52Jk3ooYhomr+O5QH6VTqQcVqmOJF54XPiFCFoMho9m115BHaLvqL02g26hirFuDd2+JqFXo6mxFpRHZeOKeqUKQFdIDYQarmiLp21RL4lYpao2ePtA4CKqDOwntC4zXtKHmA8NOosxtxRUAZ1Sdp9CPjur5Ws/A7+uSUC6TwLqCRGxTLq8dY='
+    curl -i -u admin:${SECURITY_USER_PASSWORD} -X POST "http://oss-configserver.local:8888/config/decrypt" -d 'AQAcBZjNSNIT4dFJR0mzqzVOVY2OsKim3UQyei7TXZ+VCaBVHKEX2ztFwAMaZr7LABZYAkJG/3+tfnrQoA4NsQGH0YybIMui55cyQCbMtaItRlzy9uegnRwJ5w4XOqJVdglthpqNldeKt2dxXj/C1UnHijvNWjZ+BnDc7b9mTgt4pi7dLHfaLD3tuddvRDrYiaR4oNDFn7qkEz52Jk3ooYhomr+O5QH6VTqQcVqmOJF54XPiFCFoMho9m115BHaLvqL02g26hirFuDd2+JqFXo6mxFpRHZeOKeqUKQFdIDYQarmiLp21RL4lYpao2ePtA4CKqDOwntC4zXtKHmA8NOosxtxRUAZ1Sdp9CPjur5Ws/A7+uSUC6TwLqCRGxTLq8dY='
     
   Got 'mysecret'
 

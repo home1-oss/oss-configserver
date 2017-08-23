@@ -5,7 +5,7 @@ package cn.home1.oss.environment.configserver.util;
  */
 public class TestEnv {
 
-  private static String BASE_URL = "http://configserver.local:8888/config";
+  private static String BASE_URL = "http://oss-configserver.local:8888/config";
 
   public static String getUrl(String uri) {
     return BASE_URL + uri;

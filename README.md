@@ -88,7 +88,6 @@ spring.rabbitmq:  # mq 相关配置, 后面会进一步描述
 2. 将以下加入到 `hosts` 文件中.
 ```
 127.0.0.1    cloudbus.local
-127.0.0.1    eureka.local
 127.0.0.1    gitlab.local
 ```
 3. (如果完全按照本文档默认步骤操作, 则这几个选项不用修改). 修改 `src/main/resources/application.yml` 的 `eureka.instance`, `spring.rabbitmq` 和 `spring.cloud.config.server.git.uri` 对应节点.
@@ -256,6 +255,7 @@ spring.rabbitmq:  # mq 相关配置, 后面会进一步描述
   port: 5672
   username: user
   password: user_pass
+
 ```
 
 直接访问 http://my-config-test:my-config-test@localhost:8888/config/my-config-test/development.env 可以得到 gitlab 上面的配置信息. 密码已经被解密.
