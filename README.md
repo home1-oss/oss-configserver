@@ -1,214 +1,390 @@
-
-# oss-configserver 介绍
-
-configserver是一个配置中心  
-
-分布式配置管理应该是分布式系统和微服务应用的第一步.  
-想象一下如果你有几十个服务或应用需要配置, 而且每个服务还分为开发, 测试, 生产等不同维度的配置, 那工作量是相当大的, 而且还容易出错.  
-如果能把各个应用的配置信息集中管理起来, 使用一套机制或系统来管理, 那么将极大的提高系统开发的生产效率, 同时也会提高系统开发环境和生产环境运行的一致性.  
-
-  ![configserver.png](src/readme/configserver.png)
-
-configserver基于spring-cloud-config开发.  
-spring-cloud-config由服务器和客户端2部分组成.  
-服务器管理各个应用/服务在所有环境下的外部属性.  
-客户端从服务器获取数据并构造出Spring Environment和PropertySrouce, 所以非常适合Spring应用.  
-服务器使用RESTful接口, 所以可以在任何语言开发的任何应用中使用.
-
-## configserver 的特性
-
-1. 支持yaml配置.  
-  1.1. 相对于properties文件, yaml可以将相关的配置项分组(层次), 使用缩进而不用每行都前缀, 更易阅读.  
-  1.2. 相对于properties文件, yaml类似于xml但比xml简单很多, 表达list/array等结构化数据的能力更强, 对注释的支持也更好.  
-  1.3. 相对于一组properties文件, yaml可以将多个环境(multi-profile)的配置放在一个文件中, 方便维护.  
-  1.4. 多环境一致的公共配置只需在前面写一份, 后面各个profile中不用重复.  
-  1.5. 也可以把默认配置写在前面, 后面各个profile仅需覆写有变化的配置项即可.
-
-2. 支持公司全局的公共配置.  
-  2.1. 全局公共配置可以减少应用配置的工作量.  
-  2.2. 全局公共配置方面管理公用的底层服务, 如唯一id, 短域名, 缓存等, 应用无需各种重复这些配置, 集群变更时只需要统一改一个地方.
-
-3. 使用git管理配置文件.  
-  3.1. 配置文件的版本(修改)可追溯.  
-  3.2. 可以立即切换到任意版本的配置, 上线出现问题时非常容易回退.  
-  3.3. 每个项目由项目组自行管理配置文件.
-
-4. 安全认证.  
-  4.1. 每个项目有自己的密码, 其它人看不到配置信息.  
-  4.2. 管理员可以管理用户密码.
-
-5. 配置项加密.  
-  5.1. 可以在代码开源的同时, 将敏感配置项加密, 促进代码开源, 同时不会泄密.  
-  5.2. 即使代码泄露到外网也不会造成严重安全隐患.
-
-6. 与服务发现无缝集成, 可通过服务发现使用configserver.
-
-7. 支持运行时配置更新.
-
-[YML配置介绍](INTRODUCTION_OF_YML.html)
-
-## configserver 的地址
-http://oss-configserver.internal:8888/config  
+[toc]
 
 
-## 如何使用configserver
+## oss-configserver
 
-### 1. 新建maven工程
+### 概述
+`oss-configserver`是在 `Spring Cloud Config`基础上进行定制开发, 是集成了权限控制, 配置修改主动通知等功能, 一个简单完整, 运维友好的配置中心解决方案. 此方案主要以`spring cloud`项目为主, 同时兼容`非spring cloud`情形, 详情请参考 [Spring Cloud Config 文档](https://cloud.spring.io/spring-cloud-config/).
 
-pom.xml:
+此项目意在通过一个配置中心集群, 在几乎不需要运维介入的情况下, 管理多个项目.
 
-    <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-        <modelVersion>4.0.0</modelVersion>
-    
-        <parent>
-          <groupId>cn.home1</groupId>
-          <artifactId>oss-build</artifactId>
-          <version>${oss-build.version}</version>
-        </parent>
-    
-        <groupId>cn.home1</groupId>
-        <artifactId>foo</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-        <packaging>jar</packaging>
-    
-        <properties>
-            <spring-boot.version>1.4.1.RELEASE</spring-boot.version>
-        </properties>
-    
-        <dependencyManagement>
-            <dependencies>
-                <dependency>
-                    <groupId>cn.home1</groupId>
-                    <artifactId>oss-release-spring-boot-${spring-boot.version}</artifactId>
-                    <version>${oss-release.version}</version>
-                    <type>pom</type>
-                    <scope>import</scope>
-                </dependency>
-            </dependencies>
-        </dependencyManagement>
-    
-        <dependencies>
-          <dependency>
+####  功能特点
+
+- 权限控制 集成了`spring security`, 以项目为粒度进行安全校验, 保证配置安全.
+- 运维友好 此架构几乎不需要运维. 用户名为项目名, 密码为开发自主配置加密后的密码. 任何修改开发自助完成. 仅在需要解密时, 可以登录管理员账户进行解密.
+- 主动通知 在配置变更后, 可以通过 `Spring cloud bus` 主动通知客户端, 触发配置更新动作. 当前支持`gitlab` 和 `gogs`. 根据项目名称, 可以实现`单一通知`, `前缀通知`和`全部通知`三种通知模式.
+- 开箱即用 简单配置以后, 通过 `mvn` 命令, 直接打包成 `docker` 镜像, 即可在 `docker` 环境下部署.
+
+### 快速使用
+
+
+主要以下步骤:
+
+1. 启动 `eureka` 服务发现
+2. 启动 `Spring cloud bus` 要用到的 `rabbit MQ` 消息总线服务
+3. 启动 `gitlab` git 仓库服务
+4. 在 `gitlab` 创建配置项目
+5. 配置并启动 `home1-oss configserver` 服务端
+6. 启动 `config server` 客户端, 并测试
+
+下面我们就一步一步来完成.
+
+> 此使用手册主要使用 `home1-oss` 里面相应项目来示例. 大家也可以使用其它替代品. 如果已经有服务, 可以略过对应启动过程.
+
+> 请自行先安装好`docker`和`docker compose`, 并申请和配置`docker`镜像加速(参考阿里docker镜像:https://cr.console.aliyun.com/#/accelerator).
+
+#### 启动 `eureka` 服务
+
+本文使用 `home1-oss` 下面的 `oss-eureka`.
+启动步骤:
+
+1. 将 `oss-eureka` clone 到本地某个目录 : `git clone https://github.com/home1-oss/oss-eureka.git /path/to/store`
+2. cd 到对应目录 `cd /path/to/store`
+3. 执行 `docker-compose up` 命令来启动 `eureka` 服务
+
+#### 启动 `rabit mq` 服务
+
+本文使用 `home1-oss` 下面的 `docker-cloudbus`.
+启动步骤:
+
+同 `oss-eureka` 启动过程, `docker-cloudbus`地址为: `https://github.com/home1-oss/docker-cloudbus.git`
+
+#### 启动 `gitlab` git 仓库服务
+
+本文使用 `home1-oss` 下面的 `docker-gitlab` .
+启动步骤:
+
+同 `oss-eureka` 启动过程, `docker-cloudbus`地址为: `https://github.com/home1-oss/docker-gitlab.git`
+
+> 涉及到更新, `gitlab` 这个过程会相对较慢, 如果已经有 `gitlab`, 可以用现成的.
+
+#### 在 `gitlab` 创建配置项目
+
+1. 打开 gitlab `http://localhost:10080/`, 使用 `root`/`user_pass` 登录.
+2. 创建 `home1_oss` group.
+3. 在 `home1_oss` group下, 创建`my-config-test-config` 项目.
+4. 在`my-config-test-config`项目下, 创建`application.yml`文件, 并添加以下内容:
+```
+spring:
+  application.name: 'my-config-test' 
+  cloud.config.password: 'my-config-test' # !!! 此处最好存放加密后内容, 其他人尽管看到, 也不知道密码. 详见本文档 加密 相关内容
+
+message: hello, home1-oss configserver!
+
+spring.rabbitmq:  # mq 相关配置, 后面会进一步描述
+  host: cloudbus.local
+  port: 5672
+  username: user
+  password: user_pass
+
+```
+
+> 配置项目必须以 `-config` 结尾, 这是 `oss-configserver` 的强制要求.
+
+#### 配置并启动 `home1-oss configserver` 服务端
+
+
+1. 将项目克隆到本地:`https://github.com/home1-oss/oss-configserver.git`
+2. 将以下加入到 `hosts` 文件中.
+```
+127.0.0.1    cloudbus.local
+127.0.0.1    eureka.local
+127.0.0.1    gitlab.local
+```
+3. (如果完全按照本文档默认步骤操作, 则这几个选项不用修改). 修改 `src/main/resources/application.yml` 的 `eureka.instance`, `spring.rabbitmq` 和 `spring.cloud.config.server.git.uri` 对应节点.
+4. 启动`home1-oss configserver`. 在 configserver 目录执行: `mvn spring-boot:run`
+
+#### 启动 `config server` 客户端, 并测试
+
+- 创建客户端 maven 项目, 在 `pom`里面 parent 和 dependencies 配置如下
+```
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>cn.woo5.test</groupId>
+    <artifactId>config-server-client-test</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.5.2.RELEASE</version>
+        <relativePath /> <!-- lookup parent from repository -->
+    </parent>
+
+    <properties>
+        <start-class>cn.woo5.test.config_server_client_test.ConfigServerClientApp</start-class>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>1.8</java.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
-          </dependency>
-          <dependency>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-          </dependency>
-          <dependency>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bus-amqp</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jetty</artifactId>
-          </dependency>
-          ...
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Dalston.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
-    </project>
+    </dependencyManagement>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
-src/main/java/FooApplication.java:
+</project>
 ```
-@SpringBootApplication
-@RefreshScope // 带此注解支持动态更新配置
-@RestController
-public class FooApplication {
+- 创建主类, 添加 controller 功能.
+```
+package cn.woo5.test.config_server_client_test;
 
-  @Autowired
-  private Environment environment;
-    
-  @RequestMapping("/getProperty/{key:.+}")
-  public String getProperty(@PathVariable String key) {
-    return environment.getProperty(key);
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RefreshScope
+@RestController
+@SpringBootApplication
+public class ConfigServerClientApp {
+
+  @Value("${message}")
+  private String message;
+
+  @RequestMapping("/message")
+  String getMessage() {
+    return this.message;
   }
-    
+
   public static void main(String[] args) {
-    SpringApplication.run(FooApplication.class, args);
+    SpringApplication.run(ConfigServerClientApp.class, args);
   }
 }
+
+
+```
+- 创建客户端启动配置文件 (src/main/resources/bootstrap.yml)
+
+```
+spring.application.name: my-config-test  # 我们在 gitlab 上创建的项目为 my-config-test-config , 这里取 "-config" 前面的部分
+spring.cloud.config.uri: http://localhost:8888/config # /config 是 oss-configserver 统一路径前缀
+spring.cloud.config.username: my-config-test # username 必须和applicationName一致
+spring.cloud.config.password: my-config-test
+spring.cloud.config.label: master
+spring.cloud.config.profile: development.env
+
+management.security.enabled: false
 ```
 
-src/main/resources/bootstrap.yml
+- 启动客户端
 ```
-spring.application:
-  name: foo
+mvn spring-boot:run
+```
 
-eureka:
-  instance:
-    client:
-      serviceUrl:
-        defaultZone: http://eureka.local:8761/eureka/  # 使用eureka发现configserver的地址
+- 访问并获得结果
+访问 `http://localhost:8080/message` 结果将会是:
+```
+hello, home1-oss configserver!
+```
 
-spring.cloud:
-  config:
-    enabled: true
-    discovery:
+至此, 完成 config server 基本使用.
+
+> 如果 configer server 服务端报错:`Caused by: com.jcraft.jsch.JSchException: timeout: socket is not established`. 这应该是本机 ssh 链接 gitlab 过慢导致. 可以在 application.yml 中配置 `spring.cloud.config.server.jgit.timeout` 把时间设置长一些. 单位秒.
+
+> 直接访问 `http://my-config-test:my-config-test@localhost:8888/config/my-config-test/development.env` 可以得到 gitlab 上面的配置信息. 在访问时, 最好一直带着用户名密码, 因 config-server 在集群环境下, `session` 授权不共享.
+
+### 配置加密解密
+
+在 gitlab 中创建的配置项目是他人可见的, 我们可以将密码等敏感字段加密.
+
+#### 加密
+
+我们将密码以密文形式来存放.
+
+获取密文
+命令行输入: 
+```
+curl http://localhost:8888/config/encrypt -X POST -d 'my-config-test'
+```
+我们会获得以下返回字串:
+```
+AQB4hVdKfdq5m3/OUAot6cHsm0aBFnZ84MKBYoxplYKmyprJ0wmAHhjrYsytm1ItDR3Gtem6FLeqhkipRKPg2J+2dkmvcSWNi2qWz9dZ/fdPDnAdtI8g+mVwbrBn0y1wrwQyGMFlrW93biZJlNInSDtBJSX0FshPcv/p4E/p9RCw8IbuizI7d8O+Tr4CP2w21EUiQPDUQRB8BY0k3vqCULzOLvRTqnibgCcPsTk8+pZdYYNtCjuSbxcfrcogq2c1rrTKwbfWF4FjluKLTLfiobYNIkhASmagKq71LxpumJ5PwHR5FC1sEmv/mZsnNy09h36JYwF5zGbjog+Yu8wbVjosCsQWWg1gOliV8kkJ0BujELG956EtrTV+bm7m7AYzThA=
+```
+把密文前面加上`{cipher}` 字串以后, 加上单引号, gitlab 内容更新为:
+```
+spring:
+  application.name: 'my-config-test' 
+  cloud.config.password: '{cipher}AQB4hVdKfdq5m3/OUAot6cHsm0aBFnZ84MKBYoxplYKmyprJ0wmAHhjrYsytm1ItDR3Gtem6FLeqhkipRKPg2J+2dkmvcSWNi2qWz9dZ/fdPDnAdtI8g+mVwbrBn0y1wrwQyGMFlrW93biZJlNInSDtBJSX0FshPcv/p4E/p9RCw8IbuizI7d8O+Tr4CP2w21EUiQPDUQRB8BY0k3vqCULzOLvRTqnibgCcPsTk8+pZdYYNtCjuSbxcfrcogq2c1rrTKwbfWF4FjluKLTLfiobYNIkhASmagKq71LxpumJ5PwHR5FC1sEmv/mZsnNy09h36JYwF5zGbjog+Yu8wbVjosCsQWWg1gOliV8kkJ0BujELG956EtrTV+bm7m7AYzThA='
+
+message: hello, home1-oss configserver!
+
+spring.rabbitmq:  # mq 相关配置, 后面会进一步描述
+  host: cloudbus.local
+  port: 5672
+  username: user
+  password: user_pass
+```
+
+直接访问 http://my-config-test:my-config-test@localhost:8888/config/my-config-test/development.env 可以得到 gitlab 上面的配置信息. 密码已经被解密.
+
+这样, 我们重启客户端, 同样可以用配置的 'my-config-test' 密码来访问项目.
+
+> 注: 加密内容在 `yml` 文件中要加单引号, 在 `properties` 文件中不能加单引号, 要不然内容不会被解密.
+
+#### 解密
+
+> 解密需要管理员权限. 默认管理员用户名为 `oss_admin` 密码速记生成并打印在日志中. 可以在 `application.yml` 中设置默认密码.
+
+使用 `curl http://ADMIN_NAME:ADMIN_PASS@localhost:8888/config/decrypt -X POST -d 'data to decrypt'` 解密. 把刚才加密的内容解密, 示例如下:
+
+```
+wanghaodembp:~ wanghao$ curl http://oss_admin:fb8ff2bf-eb79-4c96-a88f-3ca6ec702ec6@localhost:8888/config/decrypt -X POST -d 'AQB4hVdKfdq5m3/OUAot6cHsm0aBFnZ84MKBYoxplYKmyprJ0wmAHhjrYsytm1ItDR3Gtem6FLeqhkipRKPg2J+2dkmvcSWNi2qWz9dZ/fdPDnAdtI8g+mVwbrBn0y1wrwQyGMFlrW93biZJlNInSDtBJSX0FshPcv/p4E/p9RCw8IbuizI7d8O+Tr4CP2w21EUiQPDUQRB8BY0k3vqCULzOLvRTqnibgCcPsTk8+pZdYYNtCjuSbxcfrcogq2c1rrTKwbfWF4FjluKLTLfiobYNIkhASmagKq71LxpumJ5PwHR5FC1sEmv/mZsnNy09h36JYwF5zGbjog+Yu8wbVjosCsQWWg1gOliV8kkJ0BujELG956EtrTV+bm7m7AYzThA='
+my-config-testwanghaodembp:~ wanghao$
+```
+
+> 注意: 上面这次示例中, fb8ff2bf-eb79-4c96-a88f-3ca6ec702ec6 是我本次运行时生成的随机密码.
+
+
+### 配置通用配置(父配置)
+
+我们在配置不同项目的时候, 往往很多配置是可以提取出来共用的. `oss-configserver` 支持此功能.
+
+父配置中一个Key对应的内容会被子配置中相同Key对应内容覆盖.
+
+> 建议: 某个项目的通用配置项目就在 applicationName 后面加 `-common-config`. 例如: gitlab 名为 `my-test-config` 的配置项目对应父配置项目为: `my-test-common-config` . 原因在`主动通知`章节详细描述.
+
+#### 通用配置示例
+
+我们现在为`my-config-test-config`配置项目增加一个父配置项目.
+
+- 在 gitlab 中创建 `my-config-test-common-config` 项目, 新建 `application.yml` 文件. 文件中添加:
+
+```
+message: this is father mesage
+message2: this is the message2 of father
+```
+
+- 修改 `my-config-test-config` 的 application.yml, 增加两项:
+
+```
+spring.cloud.config.common-config.enabled: true
+spring.cloud.config.common-config.application: my-config-test-common
+```
+
+最终 `my-config-test-config` 的 application.yml 变为:
+
+```
+spring:
+  application.name: 'my-config-test' 
+  cloud.config: 
+    password: '{cipher}AQB4hVdKfdq5m3/OUAot6cHsm0aBFnZ84MKBYoxplYKmyprJ0wmAHhjrYsytm1ItDR3Gtem6FLeqhkipRKPg2J+2dkmvcSWNi2qWz9dZ/fdPDnAdtI8g+mVwbrBn0y1wrwQyGMFlrW93biZJlNInSDtBJSX0FshPcv/p4E/p9RCw8IbuizI7d8O+Tr4CP2w21EUiQPDUQRB8BY0k3vqCULzOLvRTqnibgCcPsTk8+pZdYYNtCjuSbxcfrcogq2c1rrTKwbfWF4FjluKLTLfiobYNIkhASmagKq71LxpumJ5PwHR5FC1sEmv/mZsnNy09h36JYwF5zGbjog+Yu8wbVjosCsQWWg1gOliV8kkJ0BujELG956EtrTV+bm7m7AYzThA='
+    common-config: 
       enabled: true
-      serviceId: configserver.local
-    failFast: true
-    name: foo                                       # 应用的名字(配置git repository的名称前缀)
-    label: master                                   # 配置git repository的分支
-    profile: ${ENV:development}.env                 # 配置的profile
-    username: ${CONFIG_SERVER_USERNAME:user}        # 用户名永远为user
-    password: ${CONFIG_SERVER_PASSWORD:user_pass}   # 密码需要向基础架构申请
+      application: my-config-test-common
+
+message: hello, home1-oss configserver!
 ```
 
-### 2. 向基础架构组申请应用密码
+- 现在访问 http://my-config-test:my-config-test@localhost:8888/config/my-config-test/development.env 时, 会发现已经多了一条"message2: this is the message2 of father", 而父项目message也在, 不过在装配成 yml 或 properties 时会被子 message 覆盖.
+- 此时, 向客户端发送刷新配置请求 `curl -X POST http://localhost:8080/refresh` 客户端将会获得最新配置信息.  原因是我们再Controller上面加了`@RefreshScope`注解, 并在pom里面引入了`spring-boot-starter-actuator`. 这能使客户端在不重启的情况下, 实现配置动态刷新.
 
-需提交应用名称, 密码可以自己定好也可以由基础架构提供随机密码.
+### 主动通知
 
-此步骤主要是为了:  
-1.避免应用/服务名称冲突.  
-2.每应用一个密码增加安全性.  
-3.帮助开发人员创建git仓库并设置deploy key以供configserver访问.
+`Spring cloud config` 默认通过 `Spring cloud bus`实现了修改配置以后的主动通知. 工作步骤如下:
 
-### 3. 准备配置文件
+1. 修改配置项目中的配置文件, 并`push`到 gitlab 
+2. gitlab 配置项目中的 webhook 监听到`push`发生以后, 会`POST`一个请求到 configserver 服务端.
+3. configserver 服务端接收到请求以后, 会通过 `Spring cloud bus`(MQ) 向队列中发送一个消息. 所有监听这个队列的客户端都会收到这个消息, 并主动去拉取最新配置并刷新. 实现配置推送到 git 仓库以后, 所有客户端都可以主动更新.
 
-存储配置文件的git仓库统一放在一个group (目前是: http://gitlab.internal/groups/configserver) 下面.  
-命名规则是: 以应用名称作为git repository的名称前缀, 后面加上-config.
-例如:
-应用名称(spring.application.name)为: foo  
-那么配置git仓库就是: http://gitlab.internal/groups/configserver/foo-config
+spring默认实现是推送所有监听项目. 我们进行了优化, 实现了项目单独推送, 同类推送 和 推送所有三种方式.
 
-clone 配置git仓库 `git clone git@gitlab.internal:home1-oss/foo-config.git`  
-创建application.yml
+- `gitlab`上配置项目名字以`home1_oss_common`开头, 并且 `-config` 结尾内容发生变更, 将消息通知到 config-server 后, configer server 会通过 cloud bus 推送所有, 要求所有项目服务主动更新配置.
+- 以`-common-config`结尾的项目变更, 会推送给 applicationName 相同开头的项目. 例如: `xxx-common-config` 将会推送给 `xxx*` 所有匹配的项目相关服务.
+- 以`-config`结尾的项目, 只会推送给单个项目相关服务. 例如: `xxx-config`, 只会推送给 applicationName 为 `xxx` 这一个项目相关服务.
+
+> 现在支持 gitlab & gogs 两种 git 仓库的 web hook.
+
+#### 主动通知配置示例
+
+因客户端已经加了`spring-cloud-starter-bus-amqp`依赖, 服务端也已经加了`spring-cloud-starter-stream-rabbit`依赖. 并且已经配置好. 所以客户端和服务端之间的 `Spring cloud bus` 连接已经建好. 我们下面只需要配置 `gitlab` 的 webhook, 让发生变动时, gitlab 主动通知 config server即可.
+
+- 配置 gitlab 的 webhook
+ 
+在 gitlab 项目中 `setting` - `integration` 菜单下 URL 中输入 `http://xxx.xxx.xxx.xxx:8888/config/monitor` 并点击 添加按钮. 
+> 注意: 
+> 1. 如果用的是 docker 中的 gitlab, 在添加 webhook 时, 一定要用你电脑的IP, 因为 localhost 代表的是 gitlab 所在 docker 内部. 
+> 2. 节点是 `/config/monitor`, 因为我们在所有访问 config server 相关请求前面都加了 /config 这一层.
+
+- 添加完 webhook 以后, 可以点击`Test`, 看下是否报错. 如果一切正常, 就可以把`my-config-test-config`clone到本地, 修改其中 message, 提交并 push. 稍等片刻, 刷新 `http://localhost:8080/message`, 发现结果已经主动变成修改以后的了.
+
+> spring cloud bus 客户端 Camden.SR5 版本有个 bug, 会在 MQ 中创建 `SpringCloudBusInput` 和 `SpringcloudBusOutput` 两个队列, 会把消息推到 output 里面, 而只监听 input, 导致无法主动刷新. 尽量不要使用.  
+> 参考链接: https://github.com/spring-cloud/spring-cloud-bus/issues/55
+
+### 其他
+
+#### euraka 相关
+
+前面我们都直接通过 IP 调用. 其实完全可以通过服务发现方式. 这里就不再赘述.
+
+
+#### docker 相关
+
+docker 脚本都已经准备好. 通过 `docker-compose up`命令, 可以直接打包docker运行.
+
+
+#### 已知 bug
+
+启动以后会发现日志里面会出现下面所示错误. 这是一个 Spring 的 bug. 不过不影响正常使用.
+
+> https://github.com/spring-cloud/spring-cloud-netflix/issues/1055
+
+
 ```
-# foo-config
-# 注意格式 不要用tab
-
-server:
-  port: 8080
-
-test.property: default
-
----
-spring:
-  profiles: prodection.env # 生产环境
-
-test.property: production.env
-
----
-spring:
-  profiles: development.env # 开发环境
-
-test.property: development.env
+2017-08-22T18:01:38,394 [1;31mERROR[m [32mc.n.d.TimedSupervisorTask [AsyncResolver-bootstrap-0] task supervisor rejected the task[m
+java.util.concurrent.RejectedExecutionException: Task java.util.concurrent.FutureTask@76f0322b rejected from java.util.concurrent.ThreadPoolExecutor@7837d285[Terminated, pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0]
+	at java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:2047) ~[?:1.8.0_101]
+	at java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:823) ~[?:1.8.0_101]
+	at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:1369) ~[?:1.8.0_101]
+	at java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:112) ~[?:1.8.0_101]
+	at com.netflix.discovery.TimedSupervisorTask.run(TimedSupervisorTask.java:62) [eureka-client-1.4.11.jar:1.4.11]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_101]
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266) [?:1.8.0_101]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_101]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293) [?:1.8.0_101]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142) [?:1.8.0_101]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617) [?:1.8.0_101]
+	at java.lang.Thread.run(Thread.java:745) [?:1.8.0_101]
 ```
-提交配置文件 `git add . && git commit -m 'foo config' && git push origin master`
-
-此时访问configserver应该可以看到配置信息.  
-例如: 在浏览器里打开  
-http://${configserver-host}:8888/config/foo/default/master  
-或  
-http://${configserver-host}:8888/config/foo/development.env/master  
-可以看到类似下图的信息.  
-![](src/readme/foo_test.png)  
-可以对比观察一下不同环境下配置信息的差异.
-
-注意:  
-configserver会自动加载通用配置(如不同环境下一些基础服务的地址等设置), 这些配置对全部项目有效, 项目中可以直接使用(如 @Value), 如下图:  
-![通用配置](src/readme/common-config.png)
-
-### 4. 运行 FooApplication 的main方法
-
-访问 http://127.0.0.1:8080/getProperty/${key} 可以发现配置已经读到了程序中, 如下图.  
-![getProperty](src/readme/foo_get_property.png)
-
-到这里, configserver就配置好了.
