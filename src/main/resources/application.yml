@@ -6,7 +6,7 @@ app:
   git.file.config.password.key: spring.cloud.config.password
   admin: 
     # userName: oss_admin
-    password: admin_pass
+    # password: admin_pass
     logAdminPassowrd: true
 
 logging.level.: ${LOGGING_LEVEL_:INFO}
