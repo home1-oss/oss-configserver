@@ -89,7 +89,7 @@ public class ConfigServer {
   }
 
   @Bean
-  @ConditionalOnProperty(value = "spring.cloud.config.server.monitor.gitlabpath.enabled", havingValue = "true")
+  @ConditionalOnProperty(value = "spring.cloud.config.server.monitor.gogspath.enabled", havingValue = "true")
   public GogsPropertyPathNotificationExtractor gogsPropertyPathNotificationExtractor() {
     return new GogsPropertyPathNotificationExtractor();
   }

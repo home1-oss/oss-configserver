@@ -64,12 +64,12 @@ spring.cloud:
       deployKey: ${SPRING_CLOUD_CONFIG_SERVER_DEPLOYKEY:classpath:default_deploy_key} # A custom property
       prefix: /config
       git:
+        uri: ${GIT_PREFIX:ssh://git@gitlab.local:20022/home1_oss}/{application}-config.git # SSH
         #uri: ${GIT_PREFIX:https://gitlab.local:20080/home1-oss}/all-applications-in-one-repo-config.git # can use wildcard
         #uri: ${GIT_PREFIX:http://gitlab.local:20080/home1-oss}/{application}-config.git # can use wildcard # http or https
         #username: git_username
         #password: git_password
         #uri: ${GIT_PREFIX:git@gitlab.internal:home1-oss}/{application}-config.git # SSH
-        uri: ${GIT_PREFIX:ssh://git@gitlab.local:20022/home1_oss}/{application}-config.git # SSH
         #searchPaths: src/main/resources # search locations
         #basedir: /var/configserver # default is /tmp, file lost after restart
         #repos:  # multi repos, match by 'application/profile'
@@ -86,12 +86,8 @@ spring.cloud:
         github.enabled: ${SPRING_CLOUD_CONFIG_SERVER_MONITOR_GITHUB_ENABLED:false}
         gitlab.enabled: ${SPRING_CLOUD_CONFIG_SERVER_MONITOR_GITLAB_ENABLED:false}
         gitlabpath.enabled: ${SPRING_CLOUD_CONFIG_SERVER_MONITOR_GITLABPATH_ENABLED:true}
-#      health: # configserver repository health
-#        enabled: true  #default true
-#        repositories:
-#          "common":
-#            name: "application"
-#            label: "master"
+        gogspath.enabled: ${SPRING_CLOUD_CONFIG_SERVER_MONITOR_GITLABPATH_ENABLED:true}
+        
 eureka:
   instance:
     # eureka.instance.hostname affect Status->instances's url href (not text) value on dashboard
