@@ -39,7 +39,7 @@
 启动步骤:
 
 1. 将 `oss-eureka` clone 到本地某个目录 : `git clone https://github.com/home1-oss/oss-eureka.git /path/to/store`
-2. cd 到对应目录 `cd /path/to/store`
+2. cd 到对应目录里面
 3. 执行 `docker-compose up` 命令来启动 `eureka` 服务
 
 #### 启动 `rabit mq` 服务
@@ -54,7 +54,7 @@
 本文使用 `home1-oss` 下面的 `docker-gitlab` .
 启动步骤:
 
-同 `oss-eureka` 启动过程, `docker-cloudbus`地址为: `https://github.com/home1-oss/docker-gitlab.git`
+同 `oss-eureka` 启动过程, clone 下来以后会有两个文件夹, 进入`gitlab`文件夹, docker-compose up 命令启动即可. `docker-cloudbus`地址为: `https://github.com/home1-oss/docker-gitlab.git`
 
 > 涉及到更新, `gitlab` 这个过程会相对较慢, 如果已经有 `gitlab`, 可以用现成的.
 
@@ -62,7 +62,7 @@
 
 1. 打开 gitlab `http://localhost:10080/`, 使用 `root`/`user_pass` 登录.
 2. 创建 `home1_oss` group.
-3. 在 `home1_oss` group下, 创建`my-config-test-config` 项目.
+3. 在 `home1_oss` group下, 创建`my-config-test-config` 项目. 注意项目创建时设置为 `public` 公共访问(此文档中创建所有配置项目都为`public`权限).
 4. 在`my-config-test-config`项目下, 创建`application.yml`文件, 并添加以下内容:
 ```
 spring:
@@ -88,10 +88,11 @@ spring.rabbitmq:  # mq 相关配置, 后面会进一步描述
 2. 将以下加入到 `hosts` 文件中.
 ```
 127.0.0.1    cloudbus.local
+127.0.0.1    oss-eureka.local
 127.0.0.1    gitlab.local
 ```
 3. (如果完全按照本文档默认步骤操作, 则这几个选项不用修改). 修改 `src/main/resources/application.yml` 的 `eureka.instance`, `spring.rabbitmq` 和 `spring.cloud.config.server.git.uri` 对应节点.
-4. 启动`home1-oss configserver`. 在 configserver 目录执行: `mvn spring-boot:run`
+4. 启动`home1-oss configserver`. cd 到对应目录里面, 执行: `mvn spring-boot:run`
 
 #### 启动 `config server` 客户端, 并测试
 
@@ -255,7 +256,6 @@ spring.rabbitmq:  # mq 相关配置, 后面会进一步描述
   port: 5672
   username: user
   password: user_pass
-
 ```
 
 直接访问 http://my-config-test:my-config-test@localhost:8888/config/my-config-test/development.env 可以得到 gitlab 上面的配置信息. 密码已经被解密.
@@ -343,12 +343,13 @@ spring默认实现是推送所有监听项目. 我们进行了优化, 实现了�
 
 - 配置 gitlab 的 webhook
  
-在 gitlab 项目中 `setting` - `integration` 菜单下 URL 中输入 `http://xxx.xxx.xxx.xxx:8888/config/monitor` 并点击 添加按钮. 
+在 gitlab 项目中 `setting` - `integration` 菜单下 URL 中输入 `http://xxx.xxx.xxx.xxx:8888/config/monitor` 并点击 添加按钮. (xxx.xxx.xxx.xxx 是机器IP, 不能用localhost)
 > 注意: 
 > 1. 如果用的是 docker 中的 gitlab, 在添加 webhook 时, 一定要用你电脑的IP, 因为 localhost 代表的是 gitlab 所在 docker 内部. 
 > 2. 节点是 `/config/monitor`, 因为我们在所有访问 config server 相关请求前面都加了 /config 这一层.
 
-- 添加完 webhook 以后, 可以点击`Test`, 看下是否报错. 如果一切正常, 就可以把`my-config-test-config`clone到本地, 修改其中 message, 提交并 push. 稍等片刻, 刷新 `http://localhost:8080/message`, 发现结果已经主动变成修改以后的了.
+- 添加完 webhook 以后, 可以点击`Test`, 看下是否报错(电脑慢的时候, gitlab 会给一个500, 这个看下日志正常即可). 
+- 把`my-config-test-config` clone 到本地, 修改其中 message, 提交并 push 到 gitlab. 稍等片刻, 刷新 `http://localhost:8080/message`, 发现结果已经主动变成修改以后的了.
 
 > spring cloud bus 客户端 Camden.SR5 版本有个 bug, 会在 MQ 中创建 `SpringCloudBusInput` 和 `SpringcloudBusOutput` 两个队列, 会把消息推到 output 里面, 而只监听 input, 导致无法主动刷新. 尽量不要使用.  
 > 参考链接: https://github.com/spring-cloud/spring-cloud-bus/issues/55
