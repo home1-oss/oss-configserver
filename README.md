@@ -54,15 +54,15 @@
 本文使用 `home1-oss` 下面的 `docker-gitlab` .
 启动步骤:
 
-同 `oss-eureka` 启动过程, clone 下来以后会有两个文件夹, 进入`gitlab`文件夹, docker-compose up 命令启动即可. `docker-cloudbus`地址为: `https://github.com/home1-oss/docker-gitlab.git`
+同 `oss-eureka` 启动过程, 有两个文件夹, 进入`gitlab`文件夹, docker-compose up 命令启动即可. `docker-cloudbus`地址为: `https://github.com/home1-oss/docker-gitlab.git`
 
 > 涉及到更新, `gitlab` 这个过程会相对较慢, 如果已经有 `gitlab`, 可以用现成的.
 
 #### 在 `gitlab` 创建配置项目
 
-1. 打开 gitlab `http://localhost:10080/`, 使用 `root`/`user_pass` 登录.
-2. 创建 `home1_oss` group.
-3. 在 `home1_oss` group下, 创建`my-config-test-config` 项目. 注意项目创建时设置为 `public` 公共访问(此文档中创建所有配置项目都为`public`权限).
+1. 打开 gitlab `http://localhost:10080/`, 使用 `user`/`user_pass` 登录.
+2. `home1-oss` group 应该已经创建好.
+3. 在 `home1-oss` group下, 创建`my-config-test-config` 项目. 
 4. 在`my-config-test-config`项目下, 创建`application.yml`文件, 并添加以下内容:
 ```
 spring:
@@ -78,8 +78,18 @@ spring.rabbitmq:  # mq 相关配置, 后面会进一步描述
   password: user_pass
 
 ```
+5. 在项目中进入`settings`-`Repository`菜单,在`deploy key`里面, 会有一个名字为`configserver@home1.cn_xxx`的deployKey, 点击 `enable` 将其激活. 这样 configerserver 就有权限访问到项目数据了. 如果使用已有 gitlab, 那么默认不会有这个`configserver@home1.cn_xxx` deploy key. 手工添加 deploy Key 见后面.
 
 > 配置项目必须以 `-config` 结尾, 这是 `oss-configserver` 的强制要求.
+
+##### 在 gitlab 中添加 deploy key
+1. 获取 configserver deploy key, 执行以下命令`curl http://localhost:8888/config/deployPublicKey`
+2. 在 gitlab 中以管理员身份点击`admin area`那个小扳手的图标. 进入管理员界面.
+3. 点开齿轮状设置菜单, 选择`Deply keys`子菜单.
+4. 点击`New Deploy Key` 将刚才第一步获得的 deployKey 添加上即可. 最后去对应项目中, 将 deploy key 设置为可用状态.
+```
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDJexpGshox4d2mRhYIjOjxlAmcF9k9fKzlr2ylKS32LwMrVeKY+XyV06YvX0FE0uwj3DSp2Vai2e8kEylRDhQmuV1ZjjA08P9/j9SacFuzY8TfncdUwsQ3wxmBjmlpQoODUad7v0ld0r1AfttqbfGJr8L5gPzxvoA96K+6PkYyzUwbStJiW0ruNEVOb5LgN/v90LWMorwXj2Y/fu+i5OWp+iCTrQ6ltC6xQ/f3MyRMbfUxW3cXNp9UkdVkFDJ4Le/5poim5yPi6d2vjG8z7h5hM7M+H7q72hVoH9Rx0yzp55jOSRMXDGU138pK6HQFU/mCw9yaT0OwGK5IdvaX+ryd configserver@home1.cn
+```
 
 #### 配置并启动 `home1-oss configserver` 服务端
 
@@ -331,7 +341,7 @@ message: hello, home1-oss configserver!
 
 spring默认实现是推送所有监听项目. 我们进行了优化, 实现了项目单独推送, 同类推送 和 推送所有三种方式.
 
-- `gitlab`上配置项目名字以`home1_oss_common`开头, 并且 `-config` 结尾内容发生变更, 将消息通知到 config-server 后, configer server 会通过 cloud bus 推送所有, 要求所有项目服务主动更新配置.
+- `gitlab`上配置项目名字以`home1-oss-common`开头, 并且 `-config` 结尾内容发生变更, 将消息通知到 config-server 后, configer server 会通过 cloud bus 推送所有, 要求所有项目服务主动更新配置.
 - 以`-common-config`结尾的项目变更, 会推送给 applicationName 相同开头的项目. 例如: `xxx-common-config` 将会推送给 `xxx*` 所有匹配的项目相关服务.
 - 以`-config`结尾的项目, 只会推送给单个项目相关服务. 例如: `xxx-config`, 只会推送给 applicationName 为 `xxx` 这一个项目相关服务.
 

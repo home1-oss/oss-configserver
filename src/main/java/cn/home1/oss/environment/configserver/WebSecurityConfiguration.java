@@ -52,7 +52,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     http //
         .csrf().disable() //
         .authorizeRequests() //
-        .antMatchers("/").permitAll()//
+        .antMatchers(configServerPrefix + "/").permitAll()//
+        .antMatchers(configServerPrefix + "/deployPublicKey").permitAll()//
         .antMatchers(this.configServerPrefix + "/encrypt", this.monitorEndpoint).permitAll()
         .antMatchers(this.configServerPrefix + "/decrypt").hasRole(Role.ADMIN.toString()) //
         .antMatchers(new String[] { //

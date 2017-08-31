@@ -62,9 +62,10 @@ spring.cloud:
       defaultLabel: ${SPRING_CLOUD_CONFIG_SERVER_DEFAULTLABEL:master}
       defaultProfile: ${SPRING_CLOUD_CONFIG_SERVER_DEFAULTPROFILE:default}
       deployKey: ${SPRING_CLOUD_CONFIG_SERVER_DEPLOYKEY:classpath:default_deploy_key} # A custom property
+      deployKeyPub: ${SPRING_CLOUD_CONFIG_SERVER_DEPLOYKEY:classpath:default_deploy_key.pub}
       prefix: /config
       git:
-        uri: ${GIT_PREFIX:ssh://git@gitlab.local:20022/home1_oss}/{application}-config.git # SSH
+        uri: ${GIT_PREFIX:ssh://git@gitlab.local:20022/home1-oss}/{application}-config.git # SSH
         #uri: ${GIT_PREFIX:https://gitlab.local:10080/home1-oss}/all-applications-in-one-repo-config.git # can use wildcard
         #uri: ${GIT_PREFIX:http://gitlab.local:10080/home1-oss}/{application}-config.git # can use wildcard # http or https
         #username: git_username

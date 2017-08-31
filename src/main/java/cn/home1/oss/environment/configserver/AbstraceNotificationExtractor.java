@@ -20,7 +20,7 @@ public abstract class AbstraceNotificationExtractor implements PropertyPathNotif
   private static final Pattern PATH_PATTERN = Pattern.compile("^(https?)://(.+)/(.*)/commit/[a-zA-Z0-9]{7,40}");
   private static final String ALL_APPLICATION_STR = "application";
 
-  @Value("${spring.cloud.config.server.common-config.prefix:home1_oss_common}")
+  @Value("${spring.cloud.config.server.common-config.prefix:home1-oss-common}")
   private String commonConfigPrefix;
 
   @Value("${spring.cloud.config.server.common-config.suffix:-common}")

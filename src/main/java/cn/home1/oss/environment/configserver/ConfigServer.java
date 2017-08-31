@@ -22,15 +22,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.InputStream;
 
-@Controller
+@RestController
 @EnableConfigServer
 @EnableEurekaClient
 @EnableTransactionManagement
@@ -40,10 +43,21 @@ public class ConfigServer {
   @Autowired
   private Environment environment;
 
-  @RequestMapping(path = "/")
+  @Value("${spring.cloud.config.server.deployKeyPub}")
+  private String deployKeyConfig;
+
   @ResponseBody
+  @RequestMapping(path = { "/", "${spring.cloud.config.server.prefix:}/" }, method = RequestMethod.GET)
   public String index() {
     return "welcome to home1-oss config server! visit https://github.com/home1-oss/oss-configserver for more info.";
+  }
+
+  @SneakyThrows
+  @ResponseBody
+  @RequestMapping(path = "${spring.cloud.config.server.prefix:}/deployPublicKey", method = RequestMethod.GET)
+  public String getDeploykey() {
+    String deployKeyPath = getDeployKeyPath(deployKeyConfig);
+    return FileCopyUtils.copyToString(new FileReader(new File(deployKeyPath)));
   }
 
   public static void main(final String... args) {
@@ -61,34 +75,6 @@ public class ConfigServer {
     }
   }
 
-  @SneakyThrows
-  private static String getDeployKeyPath(final String deployKey) {
-    final String deployKeyPath;
-    if (deployKey.startsWith("classpath:")) {
-      // see: http://www.baeldung.com/convert-input-stream-to-a-file
-      final String fileName = StringUtils.replaceOnce(deployKey, "classpath:", "");
-      final InputStream initialStream = ConfigServer.class.getClassLoader().getResourceAsStream(fileName);
-      if (initialStream == null) {
-        throw new IllegalArgumentException("deployKey '" + deployKey + "' not found in classpath ('" + fileName + "')");
-      }
-      final String userHome = System.getProperty("user.home");
-      final String dataDir = userHome + "/.oss/oss-configserver";
-      FileUtils.forceMkdir(new File(dataDir));
-      final File targetFile = new File(dataDir + "/default_deploy_key");
-      FileUtils.copyInputStreamToFile(initialStream, targetFile);
-      if (! targetFile.exists() || ! targetFile.canRead()) {
-        throw new IllegalArgumentException("Invalid deployKey '" + //
-            deployKey + "', targetFile '" + targetFile.getPath() + "' not found or not readable");
-      }
-      deployKeyPath = targetFile.getPath();
-    } else if (deployKey.startsWith("file:")) {
-      deployKeyPath = StringUtils.replaceOnce(deployKey, "file:", "");
-    } else {
-      deployKeyPath = deployKey;
-    }
-    return deployKeyPath;
-  }
-
   @Bean
   @ConditionalOnProperty(value = "spring.cloud.config.server.monitor.gitlabpath.enabled", havingValue = "true")
   public GitlabpathPropertyPathNotificationExtractor gitlabPropertyPathNotificationExtractor() {
@@ -104,5 +90,34 @@ public class ConfigServer {
   @Autowired
   public void setObjectMapper(final ObjectMapper objectMapper) {
     Jackson2Utils.setupObjectMapper(this.environment, objectMapper); // for GrantedAuthority
+  }
+
+
+  @SneakyThrows
+  private static String getDeployKeyPath(final String deployKey) {
+    final String deployKeyPath;
+    if (deployKey.startsWith("classpath:")) {
+      // see: http://www.baeldung.com/convert-input-stream-to-a-file
+      final String fileName = StringUtils.replaceOnce(deployKey, "classpath:", "");
+      final InputStream initialStream = ConfigServer.class.getClassLoader().getResourceAsStream(fileName);
+      if (initialStream == null) {
+        throw new IllegalArgumentException("deployKey '" + deployKey + "' not found in classpath ('" + fileName + "')");
+      }
+      final String userHome = System.getProperty("user.home");
+      final String dataDir = userHome + "/.oss/oss-configserver";
+      FileUtils.forceMkdir(new File(dataDir));
+      final File targetFile = new File(dataDir + "/default_deploy_key");
+      FileUtils.copyInputStreamToFile(initialStream, targetFile);
+      if (!targetFile.exists() || !targetFile.canRead()) {
+        throw new IllegalArgumentException("Invalid deployKey '" + //
+            deployKey + "', targetFile '" + targetFile.getPath() + "' not found or not readable");
+      }
+      deployKeyPath = targetFile.getPath();
+    } else if (deployKey.startsWith("file:")) {
+      deployKeyPath = StringUtils.replaceOnce(deployKey, "file:", "");
+    } else {
+      deployKeyPath = deployKey;
+    }
+    return deployKeyPath;
   }
 }
