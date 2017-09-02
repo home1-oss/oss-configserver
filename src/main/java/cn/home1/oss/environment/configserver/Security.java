@@ -1,37 +1,40 @@
 package cn.home1.oss.environment.configserver;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static org.apache.commons.lang3.StringUtils.isAnyBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
-/**
- * Created by zhanghaolun on 16/9/13.
- */
-public abstract class Security {
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-  public static final String USER_USER = "user";
-  public static final String USER_WEBHOOK = "webhook";
-  public static final String ADMIN = "ADMIN";
-  public static final String USER = "USER";
-  public static final String WEBHOOK = "WEBHOOK";
-  public static final String ROLE_ADMIN = "ROLE_ADMIN";
-  public static final String ROLE_USER = "ROLE_USER";
-  public static final String ROLE_WEBHOOK = "ROLE_WEBHOOK";
-  public static final String DELIMITER = "_-_";
+import java.util.UUID;
 
-  private Security() {
-  }
+import javax.annotation.PostConstruct;
 
-  public static String modifyUsername(final String application, final String username) {
-    checkArgument(!isAnyBlank(application, username), "application or username should not blank");
+@Slf4j
+@Getter
+@Component
+public class Security {
 
-    return username + DELIMITER + application;
-  }
+  @Value("${app.admin.userName:oss_admin}")
+  private String adminUserName;
 
-  public static String restoreUsername(final String modifiedUsername) {
-    checkArgument(isNotBlank(modifiedUsername), "username should not blank");
+  @Value("${app.admin.password:}")
+  private String adminPassword;
 
-    final String[] splited = modifiedUsername.split(DELIMITER);
-    return splited.length > 1 ? splited[1] : modifiedUsername;
+  @Value("${app.admin.logAdminPassowrd: true}")
+  private boolean logAdminPassowrd;
+
+  @Value("${app.webhook.userName:webhook}")
+  private String webHookUserName;
+
+  private String webHookUserPassword = UUID.randomUUID().toString();
+
+  @PostConstruct
+  private void init() {
+    if (StringUtils.isBlank(adminPassword)) {
+      adminPassword = UUID.randomUUID().toString();
+    }
+    log.info("init admin, username:{}, password:{}", adminUserName, logAdminPassowrd ? adminPassword : "*[protected]*");
   }
 }
