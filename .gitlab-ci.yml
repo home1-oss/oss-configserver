@@ -48,6 +48,6 @@ on_release_push:
   stage: publish
 
 stages:
-- analysis
 - build
+- analysis
 - publish
