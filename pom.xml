@@ -7,7 +7,7 @@
     <parent>
         <groupId>cn.home1</groupId>
         <artifactId>oss-build</artifactId>
-        <version>1.0.12.OSS</version>
+        <version>1.0.15.OSS</version>
     </parent>
 
     <artifactId>oss-configserver</artifactId>
@@ -33,8 +33,8 @@
 
     <properties>
         <dnsjava.version>2.1.7</dnsjava.version>
-        <spring-boot.version>1.4.1.RELEASE</spring-boot.version>
-        <oss-release.version>1.0.6.OSS</oss-release.version>
+        <oss-release.version>1.0.10.OSS-SNAPSHOT</oss-release.version>
+        <spring-boot.version>1.5.6.RELEASE</spring-boot.version>
 
         <webjars-locator.version>0.30</webjars-locator.version>
         <webjars-bootstrap-treeview.version>1.2.0</webjars-bootstrap-treeview.version>
