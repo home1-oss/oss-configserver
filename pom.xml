@@ -32,10 +32,10 @@
     </scm>
 
     <properties>
-        <dnsjava.version>2.1.7</dnsjava.version>
         <oss-release.version>1.0.10.OSS-SNAPSHOT</oss-release.version>
         <spring-boot.version>1.5.6.RELEASE</spring-boot.version>
 
+        <dnsjava.version>2.1.7</dnsjava.version>
         <webjars-locator.version>0.30</webjars-locator.version>
         <webjars-bootstrap-treeview.version>1.2.0</webjars-bootstrap-treeview.version>
         <webjars-handlebars.version>4.0.5</webjars-handlebars.version>
