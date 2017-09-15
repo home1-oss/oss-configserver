@@ -89,6 +89,7 @@ spring.cloud:
       defaultProfile: ${SPRING_CLOUD_CONFIG_SERVER_DEFAULTPROFILE:default}
       deployKey: ${SPRING_CLOUD_CONFIG_SERVER_DEPLOYKEY:classpath:default_deploy_key} # A custom property
       deployKeyPub: ${SPRING_CLOUD_CONFIG_SERVER_DEPLOYKEY:classpath:default_deploy_key.pub}
+      encrypt.enabled: true
       prefix: /config
       git:
         uri: ${GIT_PREFIX:ssh://git@gitlab.local:20022/home1-oss}/{application}-config.git # SSH
