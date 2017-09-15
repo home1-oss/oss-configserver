@@ -276,12 +276,12 @@ spring.rabbitmq:  # mq 相关配置, 后面会进一步描述
 
 #### 解密
 
-> 解密需要管理员权限. 默认管理员用户名为 `oss_admin` 密码速记生成并打印在日志中. 可以在 `application.yml` 中设置默认密码.
+> 解密需要管理员权限. 默认管理员用户名为 `admin` 密码速记生成并打印在日志中. 可以在 `application.yml` 中设置默认密码.
 
 使用 `curl http://ADMIN_NAME:ADMIN_PASS@localhost:8888/config/decrypt -X POST -d 'data to decrypt'` 解密. 把刚才加密的内容解密, 示例如下:
 
 ```
-wanghaodembp:~ wanghao$ curl http://oss_admin:fb8ff2bf-eb79-4c96-a88f-3ca6ec702ec6@localhost:8888/config/decrypt -X POST -d 'AQB4hVdKfdq5m3/OUAot6cHsm0aBFnZ84MKBYoxplYKmyprJ0wmAHhjrYsytm1ItDR3Gtem6FLeqhkipRKPg2J+2dkmvcSWNi2qWz9dZ/fdPDnAdtI8g+mVwbrBn0y1wrwQyGMFlrW93biZJlNInSDtBJSX0FshPcv/p4E/p9RCw8IbuizI7d8O+Tr4CP2w21EUiQPDUQRB8BY0k3vqCULzOLvRTqnibgCcPsTk8+pZdYYNtCjuSbxcfrcogq2c1rrTKwbfWF4FjluKLTLfiobYNIkhASmagKq71LxpumJ5PwHR5FC1sEmv/mZsnNy09h36JYwF5zGbjog+Yu8wbVjosCsQWWg1gOliV8kkJ0BujELG956EtrTV+bm7m7AYzThA='
+wanghaodembp:~ wanghao$ curl http://admin:fb8ff2bf-eb79-4c96-a88f-3ca6ec702ec6@localhost:8888/config/decrypt -X POST -d 'AQB4hVdKfdq5m3/OUAot6cHsm0aBFnZ84MKBYoxplYKmyprJ0wmAHhjrYsytm1ItDR3Gtem6FLeqhkipRKPg2J+2dkmvcSWNi2qWz9dZ/fdPDnAdtI8g+mVwbrBn0y1wrwQyGMFlrW93biZJlNInSDtBJSX0FshPcv/p4E/p9RCw8IbuizI7d8O+Tr4CP2w21EUiQPDUQRB8BY0k3vqCULzOLvRTqnibgCcPsTk8+pZdYYNtCjuSbxcfrcogq2c1rrTKwbfWF4FjluKLTLfiobYNIkhASmagKq71LxpumJ5PwHR5FC1sEmv/mZsnNy09h36JYwF5zGbjog+Yu8wbVjosCsQWWg1gOliV8kkJ0BujELG956EtrTV+bm7m7AYzThA='
 my-config-testwanghaodembp:~ wanghao$
 ```
 
