@@ -33,6 +33,32 @@ logging:
 
 endpoints.health.sensitive: true
 
+eureka:
+  instance:
+    healthCheckUrlPath: ${server.context-path:${SERVER_CONTEXTPATH:}}${management.context-path:${MANAGEMENT_CONTEXTPATH:}}${endpoints.health.path:/health}
+    # eureka.instance.hostname affect Status->instances's url href (not text) value on dashboard
+    hostname: ${EUREKA_INSTANCE_HOSTNAME:oss-configserver.local}
+    # eureka.instance.instance-id affect Status->instances's url text (not href) value on dashboard
+    instance-id: ${spring.application.name}:${EUREKA_INSTANCE_HOSTNAME:oss-configserver.local}:${EUREKA_INSTANCE_NONSECUREPORT:${SERVER_PORT:8888}}:${random.value}
+    leaseRenewalIntervalInSeconds: 10
+    metadataMap:
+      #instance-id: ${spring.application.name}:${EUREKA_INSTANCE_HOSTNAME:oss-configserver.local}:${EUREKA_INSTANCE_NONSECUREPORT:${SERVER_PORT:8888}}:${random.value}
+      #user: ${security.user.name} # hide admin user
+      #password: ${security.user.password} # hide admin password
+      configPath: ${spring.cloud.config.server.prefix}
+      management.context-path: ${server.context-path:${SERVER_CONTEXTPATH:}}${management.context-path:${MANAGEMENT_CONTEXTPATH:}}
+      management.port: ${management.port:${MANAGEMENT_PORT:${server.port:${SERVER_PORT:8080}}}}
+    nonSecurePort: ${EUREKA_INSTANCE_NONSECUREPORT:8888}
+    prefer-ip-address: ${EUREKA_INSTANCE_PREFER_IP_ADDRESS:false}
+    statusPageUrlPath: ${server.context-path:${SERVER_CONTEXTPATH:}}${management.context-path:${MANAGEMENT_CONTEXTPATH:}}${endpoints.info.path:/info}
+    # Registering a Secure Application
+    #healthCheckUrl: https://${eureka.instance.hostname}${endpoints.health.path:/health}
+    #homePageUrl: https://${eureka.instance.hostname}/
+    #statusPageUrl: https://${eureka.instance.hostname}${endpoints.info.path:/info}
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://user:user_pass@oss-eureka.local:8761/eureka/}
+
 management:
   #port:
   context-path: ${MANAGEMENT_CONTEXTPATH:/manage}
@@ -88,32 +114,6 @@ spring.cloud:
         gitlab.enabled: ${SPRING_CLOUD_CONFIG_SERVER_MONITOR_GITLAB_ENABLED:false}
         gitlabpath.enabled: ${SPRING_CLOUD_CONFIG_SERVER_MONITOR_GITLABPATH_ENABLED:true}
         gogspath.enabled: ${SPRING_CLOUD_CONFIG_SERVER_MONITOR_GITLABPATH_ENABLED:true}
-        
-eureka:
-  instance:
-    # eureka.instance.hostname affect Status->instances's url href (not text) value on dashboard
-    hostname: ${EUREKA_INSTANCE_HOSTNAME:oss-configserver.local}
-    prefer-ip-address: ${EUREKA_INSTANCE_PREFER_IP_ADDRESS:false}
-    # eureka.instance.instance-id affect Status->instances's url text (not href) value on dashboard
-    instance-id: ${spring.application.name}:${EUREKA_INSTANCE_HOSTNAME:oss-configserver.local}:${EUREKA_INSTANCE_NONSECUREPORT:${SERVER_PORT:8888}}:${random.value}
-    nonSecurePort: ${EUREKA_INSTANCE_NONSECUREPORT:8888}
-    leaseRenewalIntervalInSeconds: 10
-    statusPageUrlPath: ${server.context-path:${SERVER_CONTEXTPATH:}}${management.context-path:${MANAGEMENT_CONTEXTPATH:}}${endpoints.info.path:/info}
-    healthCheckUrlPath: ${server.context-path:${SERVER_CONTEXTPATH:}}${management.context-path:${MANAGEMENT_CONTEXTPATH:}}${endpoints.health.path:/health}
-    # Registering a Secure Application
-    #statusPageUrl: https://${eureka.instance.hostname}${endpoints.info.path:/info}
-    #healthCheckUrl: https://${eureka.instance.hostname}${endpoints.health.path:/health}
-    #homePageUrl: https://${eureka.instance.hostname}/
-    metadataMap:
-      #instance-id: ${spring.application.name}:${EUREKA_INSTANCE_HOSTNAME:oss-configserver.local}:${EUREKA_INSTANCE_NONSECUREPORT:${SERVER_PORT:8888}}:${random.value}
-      #user: ${security.user.name} # hide admin user
-      #password: ${security.user.password} # hide admin password
-      configPath: ${spring.cloud.config.server.prefix}
-      management.context-path: ${server.context-path:${SERVER_CONTEXTPATH:}}${management.context-path:${MANAGEMENT_CONTEXTPATH:}}
-      management.port: ${management.port:${MANAGEMENT_PORT:${server.port:${SERVER_PORT:8080}}}}
-  client:
-    serviceUrl:
-      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://user:user_pass@oss-eureka.local:8761/eureka/}
 
 spring:
   rabbitmq:
