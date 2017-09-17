@@ -6,9 +6,10 @@ spring:
     config:
       enabled: false
 
+# see: org.springframework.cloud.config.server.config.EncryptionAutoConfiguration
 encrypt: # asymmetric encryption
   failOnError: false
-  keyStore:
+  key-store:
     alias: ${ENCRYPT_KEYSTORE_ALIAS:key_alias}
     secret: ${ENCRYPT_KEYSTORE_SECRET:key_pass}
     password: ${ENCRYPT_KEYSTORE_PASSWORD:store_pass}
