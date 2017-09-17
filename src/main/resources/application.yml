@@ -8,7 +8,7 @@ app:
 
 security: 
   user: 
-    name: admin123
+    name: admin
   # password: admin_pass
   # logAdminPassowrd: true
 
