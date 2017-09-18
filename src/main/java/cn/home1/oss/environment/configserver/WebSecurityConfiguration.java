@@ -70,7 +70,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             this.configServerPrefix + "/{name}/{profile}/{label}/**", //
             this.configServerPrefix + "/{name}/{profile}/{label}/**",//
         }).access("@pathProjectNameSecurity.checkProjectPrivilege(#name)")//
-        .anyRequest().denyAll() //
+        .anyRequest().hasRole(Role.ADMIN.toString()) //
         .and() //
         .httpBasic();
   }
