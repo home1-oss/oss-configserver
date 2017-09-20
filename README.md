@@ -294,7 +294,11 @@ my-config-testwanghaodembp:~ wanghao$
 
 父配置中一个Key对应的内容会被子配置中相同Key对应内容覆盖.
 
-`oss-configserver`支持任意层级的继承. 但是注意, 请限制继承层级以保持效率. 另外要避免循环继承.
+> `oss-configserver`支持任意层级的继承.
+> 但是注意, 
+> 1. 限制继承层级以保持效率. 
+> 2. 避免循环继承.
+> 3. 继承关系项目最好要有统一前缀, 方便变更父项目, 子项目得到通知. 详见本文档: 主动通知 部分.
 
 #### 通用配置示例
 
@@ -339,11 +343,10 @@ message: hello, home1-oss configserver!
 2. gitlab 配置项目中的 webhook 监听到`push`发生以后, 会`POST`一个请求到 configserver 服务端.
 3. configserver 服务端接收到请求以后, 会通过 `Spring cloud bus`(MQ) 向队列中发送一个消息. 所有监听这个队列的客户端都会收到这个消息, 并主动去拉取最新配置并刷新. 实现配置推送到 git 仓库以后, 所有客户端都可以主动更新.
 
-spring默认实现是推送所有监听项目. 我们进行了优化, 实现了项目单独推送, 同类推送 和 推送所有三种方式.
+我们实现了两种推送规则: 
 
 - `gitlab`上配置项目名字以`home1-oss-common`开头, 并且 `-config` 结尾内容发生变更, 将消息通知到 config-server 后, configer server 会通过 cloud bus 推送所有, 要求所有项目服务主动更新配置.
-- 以`-common-config`结尾的项目变更, 会推送给 applicationName 相同开头的项目. 例如: `xxx-common-config` 将会推送给 `xxx*` 所有匹配的项目相关服务.
-- 以`-config`结尾的项目, 只会推送给单个项目相关服务. 例如: `xxx-config`, 只会推送给 applicationName 为 `xxx` 这一个项目相关服务.
+- 以`-config`结尾的项目, 会推送给相同前缀项目相关服务, 前缀是指: 第一个连接线`-`前面的字符. 例如: `xxx-config`, 会推送给 applicationName 以 `xxx` 开头的所有项目相关服务. 所以在取项目名字时要注意这一点.
 
 > 现在支持 gitlab & gogs 两种 git 仓库的 web hook.
 
