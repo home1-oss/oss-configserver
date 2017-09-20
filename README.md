@@ -294,7 +294,7 @@ my-config-testwanghaodembp:~ wanghao$
 
 父配置中一个Key对应的内容会被子配置中相同Key对应内容覆盖.
 
-> 建议: 某个项目的通用配置项目就在 applicationName 后面加 `-common-config`. 例如: gitlab 名为 `my-test-config` 的配置项目对应父配置项目为: `my-test-common-config` . 原因在`主动通知`章节详细描述.
+`oss-configserver`支持任意层级的继承. 但是注意, 请限制继承层级以保持效率. 另外要避免循环继承.
 
 #### 通用配置示例
 
@@ -310,8 +310,8 @@ message2: this is the message2 of father
 - 修改 `my-config-test-config` 的 application.yml, 增加两项:
 
 ```
-spring.cloud.config.common-config.enabled: true
-spring.cloud.config.common-config.application: my-config-test-common
+spring.cloud.config.parent-config.enabled: true
+spring.cloud.config.parent-config.application: my-config-test-common
 ```
 
 最终 `my-config-test-config` 的 application.yml 变为:
@@ -321,7 +321,7 @@ spring:
   application.name: 'my-config-test' 
   cloud.config: 
     password: '{cipher}AQB4hVdKfdq5m3/OUAot6cHsm0aBFnZ84MKBYoxplYKmyprJ0wmAHhjrYsytm1ItDR3Gtem6FLeqhkipRKPg2J+2dkmvcSWNi2qWz9dZ/fdPDnAdtI8g+mVwbrBn0y1wrwQyGMFlrW93biZJlNInSDtBJSX0FshPcv/p4E/p9RCw8IbuizI7d8O+Tr4CP2w21EUiQPDUQRB8BY0k3vqCULzOLvRTqnibgCcPsTk8+pZdYYNtCjuSbxcfrcogq2c1rrTKwbfWF4FjluKLTLfiobYNIkhASmagKq71LxpumJ5PwHR5FC1sEmv/mZsnNy09h36JYwF5zGbjog+Yu8wbVjosCsQWWg1gOliV8kkJ0BujELG956EtrTV+bm7m7AYzThA='
-    common-config: 
+    parent-config: 
       enabled: true
       application: my-config-test-common
 
