@@ -14,6 +14,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.MultiValueMap;
 
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -50,7 +51,7 @@ public class GogsPropertyPathNotificationExtractorTest {
         "oss-todomvc-app" //
     ));
     assertTrue(contains( //
-        this.extractor.extract(headers, payload("common-config")).getPaths(), //
+        this.extractor.extract(headers, payload("home1-oss-common-config")).getPaths(), //
         "application" //
     ));
   }

@@ -16,13 +16,13 @@ import javax.annotation.PostConstruct;
 @Component
 public class Security {
 
-  @Value("${app.admin.userName:admin}")
+  @Value("${security.user.name:admin}")
   private String adminUserName;
 
-  @Value("${app.admin.password:}")
+  @Value("${security.user.password:}")
   private String adminPassword;
 
-  @Value("${app.admin.logAdminPassowrd:true}")
+  @Value("${security.user.logAdminPassowrd:true}")
   private boolean logAdminPassowrd;
 
   @Value("${app.webhook.userName:webhook}")

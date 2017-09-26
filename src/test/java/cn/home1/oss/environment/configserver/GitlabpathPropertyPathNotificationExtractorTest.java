@@ -45,7 +45,7 @@ public class GitlabpathPropertyPathNotificationExtractorTest {
         "oss-todomvc-app" //
     ));
     assertTrue(contains( //
-        this.extractor.extract(headers, payload("common-config")).getPaths(), //
+        this.extractor.extract(headers, payload("home1-oss-common-config")).getPaths(), //
         "application" //
     ));
   }
@@ -61,7 +61,7 @@ public class GitlabpathPropertyPathNotificationExtractorTest {
 
     System.setProperty("spring.cloud.config.server.common-config.application", "common-production");
     assertTrue(contains( //
-        this.extractor.extract(headers, payload("common-production-config")).getPaths(), //
+        this.extractor.extract(headers, payload("home1-oss-common-config")).getPaths(), //
         "application" //
     ));
   }

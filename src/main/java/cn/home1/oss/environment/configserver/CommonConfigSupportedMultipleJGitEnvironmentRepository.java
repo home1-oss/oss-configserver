@@ -7,12 +7,17 @@ import org.springframework.cloud.config.environment.Environment;
 import org.springframework.cloud.config.server.environment.MultipleJGitEnvironmentRepository;
 import org.springframework.core.env.ConfigurableEnvironment;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Slf4j
 public class CommonConfigSupportedMultipleJGitEnvironmentRepository extends MultipleJGitEnvironmentRepository {
 
-  private String commonEnalbeKey = "spring.cloud.config.common-config.enabled";
-  private String commonApplicationKey = "spring.cloud.config.common-config.application";
-  private String commonLabelKey = "spring.cloud.config.common-config.label";
+  private final String SPRING_APPLICATION_NAME_KEY = "spring.application.name";
+  
+  private String parentEnalbeKey = "spring.cloud.config.parent-config.enabled";
+  private String parentApplicationKey = "spring.cloud.config.parent-config.application";
+  private String parentLabelKey = "spring.cloud.config.parent-config.label";
 
   public CommonConfigSupportedMultipleJGitEnvironmentRepository(final ConfigurableEnvironment environment) {
     super(environment);
@@ -22,30 +27,43 @@ public class CommonConfigSupportedMultipleJGitEnvironmentRepository extends Mult
   @Override
   public Environment findOne(final String application, final String profile, final String label) {
 
-    final Environment applicationConfig = super.findOne(application, profile, label);
+    final Environment baseApplicationConfig = super.findOne(application, profile, label);
 
-    final Environment commonConfig = getCommonConfig(applicationConfig);
+    final Set<String> appNames = new HashSet<>();
+    appNames.add(CloudEnvironmentUtil.getByKey(baseApplicationConfig, SPRING_APPLICATION_NAME_KEY));
 
-    if (commonConfig != null) {
+
+    for (Environment parentConfig, applicationConfig = baseApplicationConfig; //
+        (parentConfig = getParentConfig(applicationConfig)) != null; //
+        applicationConfig = parentConfig) {
+      String appName = CloudEnvironmentUtil.getByKey(applicationConfig, parentApplicationKey);
+      if (appNames.contains(appName)) {
+        log.warn("config server find parent loop! ignore succeed parent. application:{}, loop appName occured:{}",
+            application, appName);
+        break;
+      } else {
+        appNames.add(appName);
+      }
       // application config first. revert cover.
       // PropertySources[n] will cover the value in PropertySources[n+1] with the same key.
-      applicationConfig.getPropertySources().addAll(commonConfig.getPropertySources());
+      baseApplicationConfig.getPropertySources().addAll(parentConfig.getPropertySources());
+
     }
 
-    return applicationConfig;
+    return baseApplicationConfig;
   }
 
 
-  private Environment getCommonConfig(final Environment applicationConfig) {
-    String enabledStr = CloudEnvironmentUtil.getByKey(applicationConfig, commonEnalbeKey);
+  private Environment getParentConfig(final Environment applicationConfig) {
+    String enabledStr = CloudEnvironmentUtil.getByKey(applicationConfig, parentEnalbeKey);
     if (enabledStr == null || !"true".equalsIgnoreCase(enabledStr.trim())) {
       return null;
     }
-    String commonApplication = CloudEnvironmentUtil.getByKey(applicationConfig, commonApplicationKey);
-    String commonApplicationLabel = CloudEnvironmentUtil.getByKey(applicationConfig, commonLabelKey);
-    if (StringUtils.isBlank(commonApplication)) {
+    String parentApplication = CloudEnvironmentUtil.getByKey(applicationConfig, parentApplicationKey);
+    String parentApplicationLabel = CloudEnvironmentUtil.getByKey(applicationConfig, parentLabelKey);
+    if (StringUtils.isBlank(parentApplication)) {
       throw new IllegalStateException(
-          "configuration error!  spring.cloud.common-config.enabled=true but spring.cloud.common-config.application is empty!");
+          "configuration error!  spring.cloud.parent-config.enabled=true but spring.cloud.parent-config.application is empty!");
     }
 
     String[] profiles = applicationConfig.getProfiles();
@@ -56,10 +74,10 @@ public class CommonConfigSupportedMultipleJGitEnvironmentRepository extends Mult
     for (String profile : profiles) {
       Environment temEnvironment = null;
       try {
-        temEnvironment = super.findOne(commonApplication, profile, commonApplicationLabel);
+        temEnvironment = super.findOne(parentApplication, profile, parentApplicationLabel);
       } catch (Exception exception) {
         log.error("fetch common config with exception! commonApplication:{}, profile:{}, commonApplicationLabel:{}",
-            commonApplication, profile, commonApplicationLabel, exception);
+            parentApplication, profile, parentApplicationLabel, exception);
         throw exception;
       }
       if (result == null) {

@@ -50,12 +50,13 @@ public abstract class AbstraceNotificationExtractor implements PropertyPathNotif
       String pattern = null;
       if (applicationName.startsWith(commonConfigPrefix)) {
         pattern = ALL_APPLICATION_STR;// to all application
-      } else if (applicationName.endsWith(commonConfigSuffix) && !commonConfigSuffix.equals(applicationName)) {
-        final String applicationNamePrefix =
-            applicationName.substring(0, applicationName.lastIndexOf(commonConfigSuffix)) + "*";
-        pattern = applicationNamePrefix;
       } else {
         pattern = applicationName;
+        final int idx = applicationName.indexOf('-', 1);
+        if (idx > 0) {
+          pattern = applicationName.substring(0, idx);
+        }
+        pattern = pattern + "*";
       }
       if (paths.add(pattern)) {
         log.info("add refresh pattern {}, applicationName:{}", pattern, applicationName);

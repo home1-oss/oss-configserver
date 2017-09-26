@@ -4,10 +4,13 @@
 app:
   adminPublicKey: ${APP_ADMINPUBLICKEY:RSA1024_PUB_X509:MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC/gmBcdQZxiQmhQrP1awAZuuOl4snl7cEV8n65osVO7CdqxXG5mUYNVr6siwuTm/SsmBV+86JISlzvMK/Bxwsmf/ApZicgItChmDuU9TCaZIksqnpbtONnCm/sHWwa/2hqPTjdc0LC+jQ/FCU2b9vpbSId0Wg28/gtoGaLWbsm/QIDAQAB}
   git.file.config.password.key: spring.cloud.config.password
-  admin: 
-    # userName: admin
-    # password: admin_pass
-    logAdminPassowrd: true
+
+
+security: 
+  user: 
+    name: admin
+  # password: admin_pass
+  # logAdminPassowrd: true
 
 logging.level.: ${LOGGING_LEVEL_:INFO}
 logging:
