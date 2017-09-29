@@ -11,6 +11,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 public class CommonConfigSupportedMultipleJGitEnvironmentRepository extends MultipleJGitEnvironmentRepository {
@@ -42,7 +44,7 @@ public class CommonConfigSupportedMultipleJGitEnvironmentRepository extends Mult
         (parentConfig = getParentConfig(applicationConfig)) != null; //
         applicationConfig = parentConfig) {
       
-      String parentAppName = CloudEnvironmentUtil.getByKey(applicationConfig, PARENT_APPLICATION_KEY);
+      String parentAppName = parseParentAppName(applicationConfig);
       
       final String parentPassword = CloudEnvironmentUtil.getByKey(parentConfig, gitFileConfigPasswordKey);
       if (StringUtils.isNotBlank(parentPassword)) {
@@ -68,6 +70,26 @@ public class CommonConfigSupportedMultipleJGitEnvironmentRepository extends Mult
 
     return baseApplicationConfig;
   }
+  
+  private String parseParentAppName(Environment currentEnv) {
+    if (currentEnv == null) {
+      return null;
+    }
+    String parentSrc = CloudEnvironmentUtil.getByKey(currentEnv, PARENT_APPLICATION_KEY);
+    return replaceSystemProperties(parentSrc);
+  }
+
+
+  private String replaceSystemProperties(String parentSrc) {
+    Pattern pattern = Pattern.compile("\\$\\{(\\w+)\\}");
+    Matcher matcher = pattern.matcher(parentSrc);
+    while (matcher.find()) {
+      String param = matcher.group(1);
+      String value = System.getProperty(param);
+      parentSrc = parentSrc.replaceAll("\\$\\{" + param + "\\}", value == null ? "" : value);
+    }
+    return parentSrc;
+  }
 
 
   private Environment getParentConfig(final Environment applicationConfig) {
@@ -75,7 +97,7 @@ public class CommonConfigSupportedMultipleJGitEnvironmentRepository extends Mult
     if (enabledStr == null || !"true".equalsIgnoreCase(enabledStr.trim())) {
       return null;
     }
-    String parentApplication = CloudEnvironmentUtil.getByKey(applicationConfig, PARENT_APPLICATION_KEY);
+    String parentApplication = parseParentAppName(applicationConfig);
     String parentApplicationLabel = CloudEnvironmentUtil.getByKey(applicationConfig, PARENT_LABEL_KEY);
     if (StringUtils.isBlank(parentApplication)) {
       throw new IllegalStateException(

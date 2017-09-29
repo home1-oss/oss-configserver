@@ -337,6 +337,32 @@ message: hello, home1-oss configserver!
 - 现在访问 http://my-config-test:my-config-test@localhost:8888/config/my-config-test/development.env 时, 会发现已经多了一条"message2: this is the message2 of father", 而父项目message也在, 不过在装配成 yml 或 properties 时会被子 message 覆盖.
 - 此时, 向客户端发送刷新配置请求 `curl -X POST http://localhost:8080/refresh` 客户端将会获得最新配置信息.  原因是我们再Controller上面加了`@RefreshScope`注解, 并在pom里面引入了`spring-boot-starter-actuator`. 这能使客户端在不重启的情况下, 实现配置动态刷新.
 
+### 通用配置测试环境和线上环境分离
+
+有一些通用的配置在测试环境和线上环境是不一样(例如公共通信秘钥等信息), 而且不想让测试环境看到. oss-config-server 支持通过添加 oss-config-server 启动参数, 在线上环境访问线上 git Repo.
+
+#### 使用步骤
+
+1. 线上启动 oss-config-server 时添加启动参数
+2. 在客户端配置 parent 信息时名字中添加参数, 这样访问测试环境 oss-config-server 获取 parent 信息时访问的是不带参数的 Repo 仓库, 访问线上环境 oss-config-server 获取 parent 信息时访问的是带有参数的 Repo 仓库.
+
+#### 配置示例
+1. 线上 oss-config-server 启动时添加如下参数(参数名字可以自定义, 这里以prodArg为例. 测试环境不要加此参数):
+```
+-DprodArg=production-
+```
+
+2. 客户端配置:
+```
+...
+...
+spring.cloud.config.parent-config.enabled: true
+spring.cloud.config.parent-config.application: my-config-test-{prodArg}common
+...
+```
+
+这样在测试环境会访问  my-config-test-common 这个父Repo, 而在线上环境将会访问  my-config-test-production-common 这个Repo.
+
 ### 主动通知
 
 `Spring cloud config` 默认通过 `Spring cloud bus`实现了修改配置以后的主动通知. 工作步骤如下:
