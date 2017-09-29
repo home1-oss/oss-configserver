@@ -78,14 +78,14 @@ spring.rabbitmq:  # mq 相关配置, 后面会进一步描述
   password: user_pass
 
 ```
-5. 在项目中进入`settings`-`Repository`菜单,在`deploy key`里面, 会有一个名字为`configserver@home1.cn_xxx`的deployKey, 点击 `enable` 将其激活. 这样 configerserver 就有权限访问到项目数据了. 如果使用已有 gitlab, 那么默认不会有这个`configserver@home1.cn_xxx` deploy key. 手工添加 deploy Key 见后面.
+5. 在项目中进入`settings`-`Repository`菜单,在`deploy key`里面, 会有一个名字为`configserver@home1.cn_xxx`的deployKey, 点击 `enable` 将其激活(每个项目需要单独激活). 这样 configerserver 就有权限访问到项目数据了. 如果使用已有 gitlab, 那么默认不会有这个`configserver@home1.cn_xxx` deploy key. 手工添加 deploy Key 见后面.
 
 > 配置项目必须以 `-config` 结尾, 这是 `oss-configserver` 的强制要求.
 
 ##### 在 gitlab 中添加 deploy key
 1. 获取 configserver deploy key, 执行以下命令`curl http://localhost:8888/config/deployPublicKey`
 2. 在 gitlab 中以管理员身份点击`admin area`那个小扳手的图标. 进入管理员界面.
-3. 点开齿轮状设置菜单, 选择`Deply keys`子菜单.
+3. 点开齿轮状设置菜单, 选择`Deploy keys`子菜单.
 4. 点击`New Deploy Key` 将刚才第一步获得的 deployKey 添加上即可. 最后去对应项目中, 将 deploy key 设置为可用状态.
 ```
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDJexpGshox4d2mRhYIjOjxlAmcF9k9fKzlr2ylKS32LwMrVeKY+XyV06YvX0FE0uwj3DSp2Vai2e8kEylRDhQmuV1ZjjA08P9/j9SacFuzY8TfncdUwsQ3wxmBjmlpQoODUad7v0ld0r1AfttqbfGJr8L5gPzxvoA96K+6PkYyzUwbStJiW0ruNEVOb5LgN/v90LWMorwXj2Y/fu+i5OWp+iCTrQ6ltC6xQ/f3MyRMbfUxW3cXNp9UkdVkFDJ4Le/5poim5yPi6d2vjG8z7h5hM7M+H7q72hVoH9Rx0yzp55jOSRMXDGU138pK6HQFU/mCw9yaT0OwGK5IdvaX+ryd configserver@home1.cn
@@ -299,6 +299,8 @@ my-config-testwanghaodembp:~ wanghao$
 > 1. 限制继承层级以保持效率. 
 > 2. 避免循环继承.
 > 3. 继承关系项目最好要有统一前缀, 方便变更父项目, 子项目得到通知. 详见本文档: 主动通知 部分.
+
+如果父配置设置了密码, 则子配置要继承需要提供密码才能访问(父文件中密码设置 key: spring.cloud.config.password. 子文件配置父密码Key: spring.cloud.config.parent-config.password). 
 
 #### 通用配置示例
 
