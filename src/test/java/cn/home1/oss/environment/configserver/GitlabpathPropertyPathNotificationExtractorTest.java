@@ -42,7 +42,7 @@ public class GitlabpathPropertyPathNotificationExtractorTest {
 
     assertTrue(contains( //
         this.extractor.extract(headers, payload("oss-todomvc-app-config")).getPaths(), //
-        "oss-todomvc-app" //
+        "oss*" //
     ));
     assertTrue(contains( //
         this.extractor.extract(headers, payload("home1-oss-common-config")).getPaths(), //
